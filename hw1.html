@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statistics Course - Homework 1 - Probability Basics</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        canvas {
+            margin-top: 20px;
+        }
+        #attackCanvas {
+            border-left: 1.5px solid black;
+        }
+        #parameters {
+            color: rgb(0, 102, 255);
+            font-weight: bold;
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 5rem auto;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .legend-item div {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+  <!-- Navigation Bar -->
+  <nav class="bg-blue-600">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <a href="#" class="text-white">
+          <h1 class="text-3xl font-bold">Guido Cesarano - 1803991</h1>
+          <h2 class="text-2xl font-semibold">Statistics Course a.a. 24/25</h2>
+      </a>
+      <button data-collapse-toggle="navbar-hamburger" type="button" class="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200" aria-controls="navbar-hamburger" aria-expanded="false">
+        <span class="sr-only">Open main menu</span>
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+        </svg>
+      </button>
+      <div class="hidden w-full" id="navbar-hamburger">
+        <ul class="flex flex-col font-medium mt-4 rounded-lg bg-gray-50">
+          <li>
+            <a href="/hw1.html" class="block py-2 px-3 text-white bg-blue-700 rounded" aria-current="page">Homework 1</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="p-6">
+    <!-- Hero Section -->
+    <section class="bg-blue-500 text-white p-8 rounded-lg mb-8">
+      <h1 class="text-4xl font-bold mb-2">HW1 - Probability Basics</h1>
+      <p class="text-lg">Introduction to basic probability concepts</p>
+    </section>
+
+    <!-- Homework List -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="grid gap-4">
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Population</h3>
+          <p class="mb-4">
+            In statistics, a <b>population</b> refers to the entire set of individuals or observations that are of interest in a particular study.
+            This could be all the people in a country, all the trees in a forest, or all the transactions in a year for a company.
+            <br>
+            The population is denoted by parameters such as the mean (μ), standard deviation (σ), and proportion (P). 
+            These parameters are fixed values that describe the entire population.
+            <br>
+            <br>
+            <b>Example:</b>
+            If we want to study the average height of adults in Italy, the population would include all adults living in Italy.
+          </p>
+        </article>
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Statistical Unit</h3>
+          <p class="mb-4">
+              A <b>statistical unit</b> is the individual element or entity of the population that is being studied.
+              It is the smallest unit of observation for which data is collected. Each unit provides one data point in the dataset.
+              <br>
+              <br>
+              <b>Example:</b>
+              In the study of the average height of adults in Italy, each adult is a statistical unit.
+          </p>
+        </article>
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Variables and Characters</h3>
+          <p class="mb-4">
+            <b>Variables</b> are characteristics or properties that can take on different values. They can be classified into different types:
+              <ul class="ms-4 my-2">
+                <li>
+                  <b>Quantitative variables:</b> These are numerical and can be measured. They can be further divided into discrete (such as number of children) and continuous (such as height, weight).
+                </li>
+                <li>
+                  <b>Qualitative variables:</b> These are categorical and describe attributes or qualities (such as gender, nationality).
+                </li>
+              </ul>
+              Characters refer to the specific attributes or properties that are being measured or observed in a study.
+              <br>
+              <br>
+              <b>Example:</b>
+              In a study on the health of individuals, variables might include age (quantitative), gender (qualitative), and blood pressure (quantitative).
+          </p>
+        </article>
+      </div>
+      <div class="grid gap-4">
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Distributions</h3>
+          <p class="mb-4">
+            A <b>distribution</b> describes how the values of a variable are spread or distributed across the population. There are several types of distributions, including:
+              <ul class="max-w-md space-y-1 list-disc list-inside">
+                <li>
+                  <b>Probability distribution:</b> Describes the likelihood of different outcomes in a random experiment. Common examples include the normal distribution, binomial distribution, and Poisson distribution.
+                </li>
+                <li>
+                  <b>Frequency distribution:</b> Shows how often each value of a variable occurs in a dataset.
+                </li>
+              </ul>
+              <b>Example:</b>
+              The normal distribution, often referred to as the bell curve, is a probability distribution that is symmetric about the mean, showing that data near the mean are more frequent in occurrence than data far from the mean.
+          </p>
+        </article>
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Arithmetic Mean</h3>
+          <p class="mb-4">
+            The <b>arithmetic mean</b> is the most common type of mean. It is calculated by summing all the values in a dataset and dividing by the number of values.
+          </p>
+        </article>
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Geometric Mean</h3>
+          <p class="mb-4">
+            The <b>geometric mean</b> is used for datasets with values that are multiplicative or vary exponentially.
+            <br>
+            It is calculated by multiplying all the values together and then taking the nth root (where n is the number of values).
+          </p>
+        </article>
+      </div>
+      <div class="grid gap-4">
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Harmonic Mean</h3>
+          <p class="mb-4">
+            The <b>harmonic mean</b> is useful for rates and ratios. It is calculated by dividing the number of values by the sum of the reciprocals of the values.
+          </p>
+        </article>
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Median</h3>
+          <p class="mb-4">
+            The <b>median</b> is the middle value of a dataset when it is ordered from smallest to largest. If the dataset has an odd number of values, the median is the middle one. If it has an even number of values, the median is the average of the two middle values.
+          </p>
+        </article>
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Mode</h3>
+          <p class="mb-4">
+            The <b>mode</b> is the value that appears most frequently in a dataset. A dataset can have more than one mode if multiple values have the same highest frequency.
+          </p>
+        </article>
+      </div>
+      <div class="grid gap-4">
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Computational Issues in Floating-Point Representation</h3>
+          <p class="mb-4">
+            Floating-point representation is a technique used to represent real numbers in a compact form, allowing for the handling of very large or very small numbers. However, it presents several computational issues:
+            <ol class="max-w-md space-y-1 list-decimal list-inside">
+              <li>
+                <b>Approximation Error:</b> Since floating-point numbers are represented with a finite number of significant digits, there is an inherent approximation error. This error can be absolute (the difference between the actual number and its representation) or relative (the ratio of the absolute error to the actual number).
+              </li>
+              <li>
+                <b>Overflow and Underflow:</b> Overflow occurs when a number is too large to be represented, while underflow occurs when a number is too small. These issues limit the range of representable numbers.
+              </li>
+              <li>
+                <b>Loss of Precision:</b> Arithmetic operations on floating-point numbers can lead to a loss of precision. For example, adding numbers with vastly different magnitudes can result in the loss of the less significant digits.
+              </li>
+              <li>
+                <b>Non-Unique Representation:</b> A number can have multiple floating-point representations, complicating comparison and sorting operations.
+              </li>
+            </ol>
+          </p>
+        </article>
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Numerical Solutions</h3>
+          <p class="mb-4">
+            To address the issues of floating-point representation, several numerical solutions can be adopted:
+            <ol class="max-w-md space-y-1 list-decimal list-inside">
+              <li>
+                <b>Increased Precision:</b> Using higher precision formats (for example: moving from 32-bit to 64-bit) to reduce approximation errors.
+              </li>
+              <li>
+                <b>Stable Numerical Algorithms:</b> Choosing algorithms that minimize the accumulation of rounding errors, such as Kahan’s summation algorithm.
+              </li>
+              <li>
+                <b>Data Normalization:</b> Reducing the range of data before performing arithmetic operations to avoid overflow and underflow.
+              </li>
+              <li>
+                <b>Specialized Libraries:</b> Utilizing mathematical libraries that implement robust numerical algorithms and automatically handle precision issues.
+              </li>
+            </ol>
+          </p>
+        </article>
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-2">Recursive Formula for Mean Calculation</h3>
+          <p class="mb-4">
+            To mitigate some of the computational issues, a recursive formula for mean calculation can be used, which reduces the accumulation of rounding errors.
+          </p>
+        </article>
+      </div>
+    </section>
+    <section class="bg-blue-500 text-white p-8 rounded-lg my-8">
+      <h1 class="text-4xl font-bold mb-2">HW1 - Simulation</h1>
+      <p class="text-lg">
+        We have n servers and m attackers attempting to penetrate them. Each hacker has probability p to penetrate each server. The main graph uses a flat line if the hacker doesn’t penetrate and a jump if he penetrates. The istogram shows how many hackers reached each level.
+      </p>
+    </section>
+    <article class="bg-white p-6 rounded-lg shadow-md">
+      <!-- Parametri dell'utente -->
+      <div id="parameters">
+        <label class="flex gap-1" for="numServers">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-16.5-3a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3m-19.5 0a4.5 4.5 0 0 1 .9-2.7L5.737 5.1a3.375 3.375 0 0 1 2.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 0 1 .9 2.7m0 0a3 3 0 0 1-3 3m0 3h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Zm-3 6h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Z" />
+            </svg>
+          </div>
+          <div>Servers (n):</div>
+        </label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" type="number" id="numServers" value="20" min="1" max="20"><br><br>
+
+        <label class="flex gap-1" for="numHackers">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+            </svg>              
+          </div>
+          <div>Hackers (m):</div>
+        </label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" type="number" id="numHackers" value="10" min="1" max="10"><br><br>
+
+        <label class="flex gap-1" for="probability">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.99 14.993 6-6m6 3.001c0 1.268-.63 2.39-1.593 3.069a3.746 3.746 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043 3.745 3.745 0 0 1-3.068 1.593c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 0 1-3.296-1.043 3.746 3.746 0 0 1-1.043-3.297 3.746 3.746 0 0 1-1.593-3.068c0-1.268.63-2.39 1.593-3.068a3.746 3.746 0 0 1 1.043-3.297 3.745 3.745 0 0 1 3.296-1.042 3.745 3.745 0 0 1 3.068-1.594c1.268 0 2.39.63 3.068 1.593a3.745 3.745 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.297 3.746 3.746 0 0 1 1.593 3.068ZM9.74 9.743h.008v.007H9.74v-.007Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm4.125 4.5h.008v.008h-.008v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+            </svg>                         
+          </div>
+          <div>Success probability (p):</div>
+        </label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" type="number" id="probability" value="0.65" step="0.01" min="0" max="1"><br><br>
+
+        <button id="updateBtn" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center">Aggiorna Simulazione</button>
+      </div>
+      <!-- Area per disegnare i grafici -->
+      <div class="canvas-container">
+          <canvas id="attackCanvas"></canvas>
+          <canvas id="probabilityCanvas"></canvas>
+      </div>
+      <!-- Valore medio -->
+       <div class="flex justify-center gap-1 text-red-600 mt-3">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z" />
+          </svg>          
+        </div>
+        <div>Mean value of penetrated servers: <b id="averageMean"></b></div>
+       </div>
+      <!-- Legenda -->
+      <div id="legend" class="legend"></div>
+
+      <script src="/attackSim.js"></script>
+    </article>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
+</body>
+</html>
