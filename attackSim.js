@@ -1,4 +1,4 @@
-// Funzione per generare un colore RGB casuale
+// Support function to generate a random RGB color
 function getRandomColor() {
     const r = Math.floor(Math.random() * 256);
     const g = Math.floor(Math.random() * 256);
@@ -6,7 +6,8 @@ function getRandomColor() {
     return `rgb(${r},${g},${b})`;
 }
 
-// Funzione per disegnare l'istogramma finale basato sui successi
+// The following function draws a 700x500 canvas to represent
+// the final histogram based on the success levels achieved by the hackers
 function drawHistogram(successCounts, n, m) {
     const canvas = document.getElementById('probabilityCanvas');
     const ctx = canvas.getContext('2d');
@@ -18,6 +19,7 @@ function drawHistogram(successCounts, n, m) {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // The array containing success levels is initialized based on the success values of each hacker
     const levelCounts = new Array(n + 1).fill(0);
     successCounts.forEach(count => {
         if (count <= n) {
@@ -25,10 +27,16 @@ function drawHistogram(successCounts, n, m) {
         }
     });
 
+    // The following parameters normalize the size of the bars
+    // that make up the histogram to fit the canvas dimensions and the total number of levels
+    // (and therefore servers)
     const barWidth = canvasWidth / (n + 1);
     const maxHeight = Math.max(...levelCounts) * 1.1;
     const histogramColor = getRandomColor();
 
+    // For each server, the height of the histogram bar is set based on
+    // the number of hackers that managed to breach it, and a small label with the server number
+    // is shown, and on each bar, the number of hackers that breached it (unless the number is zero)
     for (let i = 0; i <= n; i++) {
         const barHeight = (levelCounts[i] / maxHeight) * canvasHeight;
 
@@ -43,7 +51,9 @@ function drawHistogram(successCounts, n, m) {
     }
 }
 
-// Funzione per simulare e disegnare il grafico degli attacchi
+// The following function simulates and draws the graph of each hacker's attacks
+// on a canvas of the same size as the histogram
+// and takes the simulation parameters set by the user as input
 function drawAttackSimulation(n, m, p) {
     const canvas = document.getElementById('attackCanvas');
     const ctx = canvas.getContext('2d');
@@ -59,12 +69,15 @@ function drawAttackSimulation(n, m, p) {
     const stepX = canvasWidth / (n + 1);
     const stepY = canvasHeight / (m + 1);
 
-    // Variabile per la legenda
+    // Variable to dynamically generate the legend with colors for each hacker
     const legendContainer = document.getElementById('legend');
     legendContainer.innerHTML = '';
 
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 1;
+
+    // The following loop draws the vertical lines for each server
+    // and inserts a label with the server number at the bottom of the canvas
     for (let server = 1; server <= n; server++) {
         const currentX = server * stepX;
         ctx.beginPath();
@@ -75,6 +88,10 @@ function drawAttackSimulation(n, m, p) {
         ctx.fillText(`S${server}`, currentX - (stepX + 15) / 2, canvas.height - 10);
     }
 
+    // The following loop draws the lines representing each hacker's attacks on the servers
+    // At each step of the loop, each hacker traverses one server after the other.
+    // If their attack is successful (Math.random() < p) then the line jumps (normalized in the code for visualization purposes),
+    // otherwise it remains at the same Y-coordinate value
     for (let hacker = 0; hacker < m; hacker++) {
         let prevX = 0;
         let prevY = canvas.height;
@@ -101,31 +118,36 @@ function drawAttackSimulation(n, m, p) {
             prevY = currentY;
         }
 
-        // Aggiungi hacker alla legenda
+        // The following code block adds the current hacker in the loop to the legend with its randomly generated color
         const legendItem = document.createElement('div');
         legendItem.className = 'legend-item';
         legendItem.innerHTML = `<div style="background-color: ${color};"></div> Hacker ${hacker + 1}`;
         legendContainer.appendChild(legendItem);
     }
 
+    // The function to draw the histogram is called
     drawHistogram(successCounts, n, m);
 
-    // Calcolo del valore medio di successo per server
+    // The average success value for each server is calculated
+    // (indicating the average number of servers breached by the hackers)
     const avgSuccess = successCounts.reduce((a, b) => a + b, 0) / m;
     const avgHeight = (avgSuccess / n) * canvasHeight;
     const avgYPosition = canvasHeight - (avgHeight * (m + 1)) / m;
 
-    // Aggiungi valore medio alla pagina
+    // The calculated average is added to the page in order to be shown
     const meanValue = document.getElementById("averageMean");
     meanValue.textContent = avgSuccess.toFixed(2);
 }
 
+// The values of the parameters chosen by the user are retrieved
 document.getElementById('updateBtn').onclick = function() {
     const n = parseInt(document.getElementById('numServers').value);
     const m = parseInt(document.getElementById('numHackers').value);
     const p = parseFloat(document.getElementById('probability').value);
 
+    // The function is called to start the simulation
     drawAttackSimulation(n, m, p);
 };
 
+// This line of code allows the simulation to start on load
 document.getElementById('updateBtn').click();
