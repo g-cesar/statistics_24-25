@@ -6,6 +6,17 @@ function getRandomColor() {
     return `rgb(${r},${g},${b})`;
 }
 
+// Support function to calculate the sum recursively
+function recursiveSum(array, index = 0) {
+    // Condizione di terminazione: se l'indice è uguale alla lunghezza dell'array, ritorna 0
+    if (index === array.length) {
+        return 0;
+    }
+    // Somma l'elemento corrente e chiama ricorsivamente la funzione per il successivo
+    return array[index] + recursiveSum(array, index + 1);
+}
+
+
 // The following function draws a 700x500 canvas to represent
 // the final histogram based on the success levels achieved by the hackers
 function drawHistogram(successCounts, n, m) {
@@ -128,11 +139,9 @@ function drawAttackSimulation(n, m, p) {
     // The function to draw the histogram is called
     drawHistogram(successCounts, n, m);
 
-    // The average success value for each server is calculated
+    // The average success value for each server is calculated using a recursive function
     // (indicating the average number of servers breached by the hackers)
-    const avgSuccess = successCounts.reduce((a, b) => a + b, 0) / m;
-    const avgHeight = (avgSuccess / n) * canvasHeight;
-    const avgYPosition = canvasHeight - (avgHeight * (m + 1)) / m;
+    const avgSuccess = recursiveSum(successCounts) / m;
 
     // The calculated average is added to the page in order to be shown
     const meanValue = document.getElementById("averageMean");
