@@ -3,107 +3,145 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Euler-Maruyama Simulator</title>
+  <title>Statistics Course - Homework 2 - Welford Algorithm</title>
   <link rel="stylesheet" href="hw2-style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="container">
-    <h1>Welford Algorithm</h1>
-    <p>
-      The <b>Welford algorithm</b> is a numerically stable method for computing 
-      the mean and variance of a sequence of numbers. Unlike naive methods, 
-      which can suffer from numerical instability, Welford’s method avoids 
-      these issues, especially in floating-point arithmetic, by updating the 
-      mean and variance incrementally as new data points are added.
-    </p>
-    <h4>Problem Statement</h4>
-    <p>
-      Given a sequence of values \( x_1, x_2, \dots, x_n \), we want to compute
-       the mean  \mu  and variance  \sigma^2  incrementally with each new data point, 
-       rather than storing and processing the entire dataset at once.
-    </p>
-    <h1>Euler-Maruyama Simulator</h1>
-    <h3>Frequenza Assoluta</h3>
-    <p>
-      <b>Definizione:</b> Indica il numero di volte che un certo livello di successo viene raggiunto dagli hacker dopo aver attaccato i server.
-      <br>
-      <b>Grafico:</b> Quando utilizziamo la frequenza assoluta, sull’asse Y abbiamo il numero totale di hacker che hanno raggiunto un determinato livello di successo (in termini di attacchi riusciti) per ogni server attaccato.
-    </p>
-    <h3>Frequenza Relativa</h3>
-    <p>
-      <b>Definizione:</b> Indica la proporzione di hacker che hanno raggiunto un certo livello di successo rispetto al numero totale di server attaccati. Viene calcolata dividendo la frequenza assoluta per il numero di server attaccati.
-      <br>
-      <b>Grafico:</b> Con la frequenza relativa, l’asse Y rappresenta la probabilità che un hacker raggiunga un certo livello di successo in relazione al numero di server attaccati, normalizzata tra -1 e 1.
-    </p>
-    <h3>Confronto tra frequenze utilizzate</h3>
-    <p>
-      Utilizzando la frequenza assoluta, si osserva una distribuzione a campana che parte da 0 e si espande man mano che gli attacchi degli hacker progrediscono su ciascun server. Con l’uso della frequenza relativa, invece, 
-      il grafico mostra un cambiamento significativo: al tempo t_max, i valori relativi per i diversi hacker tendono a concentrarsi attorno allo 0.
-    </p>
-    <h3>Deviazione Standard</h3>
-    <p>
-      <b>Definizione:</b> La deviazione standard (σ) misura la dispersione dei livelli di successo degli hacker attorno alla media. Nel contesto del simulatore, rappresenta la variabilità dei successi degli hacker sui server attaccati.
-      <br>
-      <b>Deviazione standard a tempo t:</b> Dopo aver attaccato solo una parte dei server, la dispersione dei successi tra gli hacker è minore. Questo è dovuto al fatto che gli hacker hanno avuto meno opportunità di differenziarsi nei loro livelli di successo. 
-      Poiché il numero di server attaccati è limitato, i successi degli hacker tendono a essere più concentrati attorno alla media, il che porta a una deviazione standard più bassa.
-      <br>
-      <b>Deviazione standard maggiore:</b> Dopo aver attaccato tutti i server (a tempo n), la dispersione dei successi tra gli hacker è molto più ampia. A questo punto, gli hacker hanno avuto molte più iterazioni (attacchi), e quindi i livelli di successo sono più distribuiti, con un conseguente aumento della deviazione standard.
-    </p>
-    <div class="griglia-input">
-      <div>
-        <label for="n">Number of Attempts (n):</label>
-        <input type="number" id="n" value="100" min="1" max="300">
+<body class="bg-gray-100">
+  <nav class="bg-blue-600">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <a href="#" class="text-white">
+          <h1 class="text-3xl font-bold">Guido Cesarano - 1803991</h1>
+          <h2 class="text-2xl font-semibold">Statistics Course a.a. 24/25</h2>
+      </a>
+      <button data-collapse-toggle="navbar-hamburger" type="button" class="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200" aria-controls="navbar-hamburger" aria-expanded="false">
+        <span class="sr-only">Open main menu</span>
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+        </svg>
+      </button>
+      <div class="hidden w-full" id="navbar-hamburger">
+        <ul class="flex flex-col font-medium mt-4 rounded-lg bg-gray-50">
+          <li>
+            <a href="/hw1.html" class="block py-2 px-3 text-white bg-blue-700 rounded" aria-current="page">Homework 1</a>
+          </li>
+          <li>
+            <a href="/hw2.html" class="block py-2 px-3 text-white bg-blue-700 rounded" aria-current="page">Homework 2</a>
+          </li>
+        </ul>
       </div>
-      <div>
-        <label for="m">Number of Trajectories (m):</label>
-        <input type="number" id="m" value="10" min="1" max="300">
-      </div>
-      <div>
-        <label for="p">Probability (p):</label>
-        <input type="number" id="p" value="0.5" step="0.01" min="0" max="1">
-      </div>
-      <div>
-        <label for="p">Time (t):</label>
-        <input type="number" id="t" value="50" step="1" min="1">
-      </div>
-      <div>
-        <label for="p">Frequency Type:</label>
-        <select id="freqType">
-          <option value="Absolute" selected>Absolute</option>
-          <option value="Relative">Relative</option>
-        </select>
-      </div>
-      <button id="simulateBtn">Simulate</button>
     </div>
-
-    <!-- Line chart for trajectories -->
-    <canvas id="chartCanvas"></canvas>
-
-    <!-- Bar chart for probability distribution -->
-     <div class="graph-container">
-      <canvas id="midDistributionCanvas"></canvas>
-      <canvas id="distributionCanvas"></canvas>
-     </div>
-     <!-- Mean and Standard Deviation -->
-      <div class="mean-container">
-        <div class="mid-mean-stdDev">
-          <div>
-            <p>Mean at t: <span id="midMean">0.00</span></p>
-          </div>
-          <div>
-            <p>Standard Deviation at t: <span id="midStdDev">0.00</span></p>
-          </div>
+  </nav>
+  <main class="p-6">
+    <!-- Hero Section -->
+    <section class="bg-blue-500 text-white p-8 rounded-lg mb-8">
+      <h1 class="text-4xl font-bold mb-2">HW2 - Welford Algorithm</h1>
+      <p class="text-lg">Basic description of the Welford Algorithm </p>
+    </section>
+    <div>
+      <h1>Homework 2 - Welford Algorithm</h1>
+      <p>
+        The <b>Welford algorithm</b> is a numerically stable method for computing 
+        the mean and variance of a sequence of numbers. Unlike naive methods, 
+        which can suffer from numerical instability, Welford’s method avoids 
+        these issues, especially in floating-point arithmetic, by updating the 
+        mean and variance incrementally as new data points are added.
+      </p>
+      <h1>Euler-Maruyama Simulator</h1>
+      <div class="theory-container">
+        <div>
+          <h3>Frequenza Assoluta</h3>
+          <p>
+            <b>Definizione:</b> Indica il numero di volte che un certo livello di successo viene raggiunto dagli hacker dopo aver attaccato i server.
+            <br>
+            <b>Grafico:</b> Quando utilizziamo la frequenza assoluta, sull’asse Y abbiamo il numero totale di hacker che hanno raggiunto un determinato livello di successo (in termini di attacchi riusciti) per ogni server attaccato.
+          </p>
         </div>
-        <div class="mean-stdDev">
-          <div>
-            <p>Mean: <span id="mean">0.00</span></p>
-          </div>
-          <div>
-            <p>Standard Deviation: <span id="stdDev">0.00</span></p>
-          </div>
+        <div>
+          <h3>Frequenza Relativa</h3>
+          <p>
+            <b>Definizione:</b> Indica la proporzione di hacker che hanno raggiunto un certo livello di successo rispetto al numero totale di server attaccati. Viene calcolata dividendo la frequenza assoluta per il numero di server attaccati.
+            <br>
+            <b>Grafico:</b> Con la frequenza relativa, l’asse Y rappresenta la probabilità che un hacker raggiunga un certo livello di successo in relazione al numero di server attaccati, normalizzata tra -1 e 1.
+          </p>
+        </div>
+        <div>
+          <h3>Confronto tra frequenze utilizzate</h3>
+          <p>
+            Utilizzando la frequenza assoluta, si osserva una distribuzione a campana che parte da 0 e si espande man mano che gli attacchi degli hacker progrediscono su ciascun server. Con l’uso della frequenza relativa, invece, 
+            il grafico mostra un cambiamento significativo: al tempo t_max, i valori relativi per i diversi hacker tendono a concentrarsi attorno allo 0.
+          </p>
+        </div>
+        <div>
+          <h3>Deviazione Standard</h3>
+          <p>
+            <b>Definizione:</b> La deviazione standard (σ) misura la dispersione dei livelli di successo degli hacker attorno alla media. Nel contesto del simulatore, rappresenta la variabilità dei successi degli hacker sui server attaccati.
+            <br>
+            <b>Deviazione standard a tempo t:</b> Dopo aver attaccato solo una parte dei server, la dispersione dei successi tra gli hacker è minore. Questo è dovuto al fatto che gli hacker hanno avuto meno opportunità di differenziarsi nei loro livelli di successo. 
+            Poiché il numero di server attaccati è limitato, i successi degli hacker tendono a essere più concentrati attorno alla media, il che porta a una deviazione standard più bassa.
+            <br>
+            <b>Deviazione standard maggiore:</b> Dopo aver attaccato tutti i server (a tempo n), la dispersione dei successi tra gli hacker è molto più ampia. A questo punto, gli hacker hanno avuto molte più iterazioni (attacchi), e quindi i livelli di successo sono più distribuiti, con un conseguente aumento della deviazione standard.
+          </p>
         </div>
       </div>
+      <div class="griglia-input">
+        <div>
+          <label for="n">Number of Attempts (n):</label>
+          <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" type="number" id="n" value="100" min="1" max="300">
+        </div>
+        <div>
+          <label for="m">Number of Trajectories (m):</label>
+          <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" type="number" id="m" value="10" min="1" max="300">
+        </div>
+        <div>
+          <label for="p">Probability (p):</label>
+          <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" type="number" id="p" value="0.5" step="0.01" min="0" max="1">
+        </div>
+        <div>
+          <label for="p">Time (t):</label>
+          <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" type="number" id="t" value="50" step="1" min="1">
+        </div>
+        <div>
+          <label for="p">Frequency Type:</label>
+          <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" id="freqType">
+            <option value="Absolute" selected>Absolute</option>
+            <option value="Relative">Relative</option>
+          </select>
+        </div>
+        <button  class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center" id="simulateBtn">Simulate</button>
+      </div>
+  
+      <!-- Line chart for trajectories -->
+      <canvas id="chartCanvas"></canvas>
+  
+      <!-- Bar chart for probability distribution -->
+       <div class="graph-container">
+        <canvas id="midDistributionCanvas"></canvas>
+        <canvas id="distributionCanvas"></canvas>
+       </div>
+       <!-- Mean and Standard Deviation -->
+        <div class="mean-container">
+          <div class="mid-mean-stdDev">
+            <div>
+              <p>Mean at t: <span id="midMean">0.00</span></p>
+            </div>
+            <div>
+              <p>Standard Deviation at t: <span id="midStdDev">0.00</span></p>
+            </div>
+          </div>
+          <div class="mean-stdDev">
+            <div>
+              <p>Mean: <span id="mean">0.00</span></p>
+            </div>
+            <div>
+              <p>Standard Deviation: <span id="stdDev">0.00</span></p>
+            </div>
+          </div>
+        </div>
+    </div>
+  </main>
   <script src="hw2-script.js"></script>
 </body>
 </html>
