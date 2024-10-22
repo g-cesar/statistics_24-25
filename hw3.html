@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Euler-Maruyama Simulator</title>
+  <link rel="stylesheet" href="hw-style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <nav class="bg-blue-600">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <a href="#" class="text-white">
+          <h1 class="text-3xl font-bold">Guido Cesarano - 1803991</h1>
+          <h2 class="text-2xl font-semibold">Statistics Course a.a. 24/25</h2>
+      </a>
+      <button data-collapse-toggle="navbar-hamburger" type="button" class="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200" aria-controls="navbar-hamburger" aria-expanded="false">
+        <span class="sr-only">Open main menu</span>
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+        </svg>
+      </button>
+      <div class="hidden w-full" id="navbar-hamburger">
+        <ul class="flex flex-col font-medium mt-4 rounded-lg bg-gray-50">
+          <li>
+            <a href="/hw1.html" class="block py-2 px-3 text-white bg-blue-700 rounded" aria-current="page">Homework 1</a>
+          </li>
+          <li>
+            <a href="/hw2.html" class="block py-2 px-3 text-white bg-blue-700 rounded" aria-current="page">Homework 2</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <main class="p-6">
+    <section class="bg-blue-500 text-white p-8 rounded-lg mb-8">
+      <h1 class="text-4xl font-bold mb-2">HW3 - Location in Statistics</h1>
+      <p class="text-lg">Basic definition of Locations in Statistics</p>
+    </section>
+    <p>
+      In statistics, “location” (or central tendency) refers to a summary value that represents 
+      the center or typical value of a dataset. The most common measures of location are the mean, 
+      median, and mode, but the concept can be generalized in many ways.
+    </p>
+    <h4>Possibly Infinite Definitions:</h4>
+    <p>
+      By modifying how data is weighted, how outliers are treated, the loss function used, 
+      or even the metric space in which data points reside, we can generalize the concept of 
+      central tendency in countless ways. These generalizations open up infinite possibilities 
+      for defining location or central tendency in both practical and theoretical statistics.
+    </p>
+    <h3>Examples of changes:</h3>
+    <p>
+      <b>Weighted Means with Nonlinear Weights:</b> Assign weights to data points not just based on their frequency or importance, but through arbitrary functions (e.g., exponential, power functions).
+	    <br>
+      <b>Loss Functions for M-estimators:</b> The choice of loss function in M-estimators can be modified infinitely, creating an entire spectrum of robust central tendency measures.
+	    <br>
+      <b>Distance-Based Central Tendencies:</b> In multidimensional data or geometric data, measures of central tendency can be generalized using different distance metrics (e.g., Manhattan, Euclidean, Minkowski).
+	    <br>
+      <b>Information-Theoretic Centrality:</b> The central point of a distribution might be defined in terms of minimizing entropy or maximizing information gain.
+	    <br>
+      <b>Generalized Quantiles:</b> By dividing the distribution in arbitrary ways, any proportion of the dataset can define a form of quantile, extending the concept of “location” beyond the median.
+    </p>
+    <h1>Simulation of Euler-Maruyama Process</h1>
+    <div class="griglia-input">
+      <div>
+        <label for="n">Number of intervals (n):</label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" type="number" id="n" value="100" min="1" max="300">
+      </div>
+      <div>
+        <label for="m">Number of Trajectories (m):</label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" type="number" id="m" value="10" min="1" max="300">
+      </div>
+      <div>
+        <label for="p">Expected number of attacks (Lambda):</label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" type="number" id="p" value="1" min="0" max="1">
+      </div>
+      <div>
+        <label for="p">Time (t):</label>
+        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" type="number" id="t" value="50" step="1" min="1">
+      </div>
+      <div>
+        <label for="p">Frequency Type:</label>
+        <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block max-w-[5rem] w-full p-2.5" id="freqType">
+          <option value="Absolute" selected>Absolute</option>
+          <option value="Relative">Relative</option>
+        </select>
+      </div>
+      <button class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center" id="simulateBtn">Simulate</button>
+    </div>
+
+    <!-- Line chart for trajectories -->
+    <canvas id="chartCanvas"></canvas>
+
+    <!-- Bar chart for probability distribution -->
+     <div class="graph-container">
+      <canvas id="midDistributionCanvas"></canvas>
+      <canvas id="distributionCanvas"></canvas>
+     </div>
+     <!-- Mean and Standard Deviation -->
+      <div class="mean-container">
+        <div class="mid-mean-stdDev">
+          <div>
+            <p>Mean at t: <span id="midMean">0.00</span></p>
+          </div>
+          <div>
+            <p>Standard Deviation at t: <span id="midStdDev">0.00</span></p>
+          </div>
+        </div>
+        <div class="mean-stdDev">
+          <div>
+            <p>Mean: <span id="mean">0.00</span></p>
+          </div>
+          <div>
+            <p>Standard Deviation: <span id="stdDev">0.00</span></p>
+          </div>
+        </div>
+      </div>
+    </main>
+  <script src="hw3-script.js"></script>
+</body>
+</html>

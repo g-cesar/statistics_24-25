@@ -11,7 +11,7 @@ document.getElementById('simulateBtn').addEventListener('click', () => {
   for (let i = 0; i < m; i++) {
     const trajectory = [0];  // Starting at 0
     for (let j = 1; j <= n; j++) {
-      let step = Math.random() < p ? 1 : -1;
+      let step = Math.random() < (p/n) ? 1 : 0;
       if(freqType == "Relative"){
         trajectory.push((trajectory[j - 1] + step) / j);
       }else{
@@ -25,7 +25,7 @@ document.getElementById('simulateBtn').addEventListener('click', () => {
   }
 
   // --- Line Chart for Trajectories ---
-  const labels = Array.from({ length: n + 1 }, (_, i) => i);
+  const labels = Array.from({ length: n + 1 }, (_, i) => i / n);
   const datasets = trajectories.map((trajectory, index) => ({
     label: `Trajectory ${index + 1}`,
     data: trajectory,
