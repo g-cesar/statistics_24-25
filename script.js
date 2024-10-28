@@ -1,31 +1,51 @@
-document.getElementById('simulateBtn').addEventListener('click', () => {
+function randomWalk(trajectories, finalHeights, m, n, p, freqType, jump_1, jump_2) {
+  for (let i = 0; i < m; i++) {
+      const trajectory = [0];  // Starting at 0
+      for (let j = 1; j <= n; j++) {
+        let step = Math.random() < p ? jump_1 : jump_2;
+        if(freqType == "Relative"){
+          trajectory.push((trajectory[j - 1] + step) / j);
+        }else{
+          trajectory.push(trajectory[j - 1] + step);
+        }
+        
+      }
+      trajectories.push(trajectory);
+      finalHeights.push(trajectory[n]);  // Save the final height
+  }
+}
+
+function simulate(){
   const n = parseInt(document.getElementById('n').value);
   const m = parseInt(document.getElementById('m').value);
-  const p = parseFloat(document.getElementById('p').value);
+  const lambda = parseFloat(document.getElementById('lambda').value);
   const t = parseInt(document.getElementById('t').value);
   const freqType = document.getElementById('freqType').value;
+  const jumpType = document.getElementById('jumpType').value;
 
   // Generate m trajectories, each with n attempts
   const trajectories = [];
   const finalHeights = [];  // To store the final heights for distribution
-  for (let i = 0; i < m; i++) {
-    const trajectory = [0];  // Starting at 0
-    for (let j = 1; j <= n; j++) {
-      let step = Math.random() < p ? 1 : -1;
-      if(freqType == "Relative"){
-        trajectory.push((trajectory[j - 1] + step) / j);
-      }else{
-        trajectory.push(trajectory[j - 1] + step);
-      }
-      
-    }
-    trajectories.push(trajectory);
-    finalHeights.push(trajectory[n]);  // Save the final height
-    console.log(trajectories);
+  let labels = [];
+
+  if(jumpType == "1"){
+    randomWalk(trajectories, finalHeights, m, n, lambda/100, freqType, 1, 0);
+    labels = Array.from({ length: n + 1 }, (_, i) => i);
+  }
+  else if(jumpType == "2"){
+    randomWalk(trajectories, finalHeights, m, n, lambda/100, freqType, 1, -1);
+    labels = Array.from({ length: n + 1 }, (_, i) => i);
+  }
+  else if(jumpType == "3"){
+    randomWalk(trajectories, finalHeights, m, n, lambda/n, freqType, 1, 0);
+    labels = Array.from({ length: n + 1 }, (_, i) => i / n);
+  }else if(jumpType == "4"){
+    randomWalk(trajectories, finalHeights, m, n, lambda/n, freqType, Math.sqrt(1 / n), -Math.sqrt(1 / n));
+    labels = Array.from({ length: n + 1 }, (_, i) => i / n);
   }
 
   // --- Line Chart for Trajectories ---
-  const labels = Array.from({ length: n + 1 }, (_, i) => i);
+  
   const datasets = trajectories.map((trajectory, index) => ({
     label: `Trajectory ${index + 1}`,
     data: trajectory,
@@ -221,4 +241,6 @@ document.getElementById('stdDev').textContent = stdDev.toFixed(2);
 document.getElementById('midMean').textContent = midMean.toFixed(2);
 document.getElementById('midStdDev').textContent = midStdDev.toFixed(2);
 
-});
+}
+
+simulate();

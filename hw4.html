@@ -45,32 +45,23 @@
   </nav>
   <main class="p-6">
     <section class="bg-blue-500 text-white p-8 rounded-lg mb-8">
-      <h1 class="text-4xl font-bold mb-2">HW3 - Location in Statistics</h1>
-      <p class="text-lg">Basic definition of Locations in Statistics</p>
+      <h1 class="text-4xl font-bold mb-2">HW4 - Independence in Statistics</h1>
+      <p class="text-lg">Basic definition of Independence concept in Statistics</p>
     </section>
     <p>
-      In statistics, “location” (or central tendency) refers to a summary value that represents 
-      the center or typical value of a dataset. The most common measures of location are the mean, 
-      median, and mode, but the concept can be generalized in many ways.
+      Statistical independence is a fundamental concept in probability theory, representing the idea that the occurrence of one event does not affect the occurrence of another. In simpler terms, two events are considered independent if knowing the outcome of one does not provide any information about the other. This concept extends to various contexts in probability and statistics and is essential in areas such as statistical inference, decision theory, and stochastic processes.
     </p>
-    <h4>Possibly Infinite Definitions:</h4>
+    <h4>Formal Definition of Independence:</h4>
     <p>
-      By modifying how data is weighted, how outliers are treated, the loss function used, 
-      or even the metric space in which data points reside, we can generalize the concept of 
-      central tendency in countless ways. These generalizations open up infinite possibilities 
-      for defining location or central tendency in both practical and theoretical statistics.
+      Let  A  and  B  be two events in a probability space. The events  A  and  B  are said to be independent if: \[ P(A \cap B) = P(A) \cdot P(B) \]
     </p>
-    <h3>Examples of changes:</h3>
+    <h3>Analogies in Probability Theory:</h3>
     <p>
-      <b>Weighted Means with Nonlinear Weights:</b> Assign weights to data points not just based on their frequency or importance, but through arbitrary functions (e.g., exponential, power functions).
+      <b>Coin Flips:</b> Consider two independent coin flips. Let  A  be the event that the first flip results in heads, and  B  the event that the second flip results in heads. Since the result of the first flip does not influence the second, we have: \[ P(A \cap B) = P(A) \cdot P(B) = 0.5 \times 0.5 = 0.25 \]
+      This demonstrates independence because each flip is unaffected by the other.
 	    <br>
-      <b>Loss Functions for M-estimators:</b> The choice of loss function in M-estimators can be modified infinitely, creating an entire spectrum of robust central tendency measures.
-	    <br>
-      <b>Distance-Based Central Tendencies:</b> In multidimensional data or geometric data, measures of central tendency can be generalized using different distance metrics (e.g., Manhattan, Euclidean, Minkowski).
-	    <br>
-      <b>Information-Theoretic Centrality:</b> The central point of a distribution might be defined in terms of minimizing entropy or maximizing information gain.
-	    <br>
-      <b>Generalized Quantiles:</b> By dividing the distribution in arbitrary ways, any proportion of the dataset can define a form of quantile, extending the concept of “location” beyond the median.
+      <br>
+      <b>Dice Rolls:</b> If we roll two fair dice, the outcome of one die (say, getting a 3) is independent of the outcome of the other die (say, getting a 5). This is because the probability of any specific outcome on each die is the same, regardless of the outcome on the other.
     </p>
 </body>
 </html>
