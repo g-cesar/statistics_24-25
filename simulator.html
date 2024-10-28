@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Euler-Maruyama Simulator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -15,23 +16,23 @@
     </div>
     <div class="grid grid-cols-6 gap-3">
       <div>
-        <label class="block mb-2 text-sm font-medium text-gray-900" for="n">Number of intervals (n):</label>
+        <label class="block mb-2 text-sm font-medium text-gray-900" for="n"><i class="fas fa-server mr-2"></i>Servers:</label>
         <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="n" value="100" min="1" max="300">
       </div>
       <div>
-        <label class="block mb-2 text-sm font-medium text-gray-900" for="m">Number of Trajectories (m):</label>
+        <label class="block mb-2 text-sm font-medium text-gray-900" for="m"><i class="fas fa-robot mr-2"></i>Hackers:</label>
         <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="m" value="10" min="1" max="300">
       </div>
       <div>
-        <label class="block mb-2 text-sm font-medium text-gray-900" for="lambda">Expected attacks (Lambda):</label>
+        <label class="block mb-2 text-sm font-medium text-gray-900" for="lambda"><i class="fas fa-gun mr-2"></i>Expected attacks:</label>
         <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="lambda" value="50" step="1" min="0" max="300">
       </div>
       <div>
-        <label class="block mb-2 text-sm font-medium text-gray-900" for="p">Time (t):</label>
+        <label class="block mb-2 text-sm font-medium text-gray-900" for="p"><i class="far fa-clock mr-2"></i>Mid-Time:</label>
         <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="t" value="50" step="1" min="1">
       </div>
       <div>
-        <label class="block mb-2 text-sm font-medium text-gray-900" for="jumpType">Jump Type:</label>
+        <label class="block mb-2 text-sm font-medium text-gray-900" for="jumpType"><i class="fas fa-list-ol mr-2"></i>Jump Type:</label>
         <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" id="jumpType">
           <option value="1" selected>HW_1) Discrete 1 : 0</option>
           <option value="2">HW_2) Discrete 1 : -1</option>
@@ -40,7 +41,7 @@
         </select>
       </div>
       <div>
-        <label class="block mb-2 text-sm font-medium text-gray-900" for="p">Frequency Type:</label>
+        <label class="block mb-2 text-sm font-medium text-gray-900" for="p"><i class="fas fa-wave-square mr-2"></i>Frequency Type:</label>
         <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" id="freqType">
           <option value="Absolute" selected>Absolute</option>
           <option value="Relative">Relative</option>
