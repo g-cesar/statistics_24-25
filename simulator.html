@@ -4,10 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Euler-Maruyama Simulator</title>
-  <link rel="stylesheet" href="/background.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    canvas#background {
+        position: fixed; /* Usa 'fixed' per mantenere il canvas in posizione */
+        top: 0;
+        left: 0;
+        width: 100%; /* Imposta la larghezza al 100% */
+        height: 100%; /* Imposta l'altezza al 100% */
+        z-index: -1; /* Assicurati che sia dietro altri contenuti */
+        background-color: #000; /* Imposta il colore di sfondo */
+    }
+
+    .glassCard{
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        height: max-content;
+    }
+
+    .glassChart{
+        background: hsla(0, 0%, 100%, 0.9);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        height: max-content;
+    }
+  </style>
 </head>
 <body class="h-svh">
   <!-- Navigation Bar -->
