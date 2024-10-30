@@ -19,23 +19,23 @@
     <div class="grid grid-cols-6 gap-3">
       <div>
         <label class="block mb-2 text-sm font-medium text-white" for="n"><i class="fas fa-server mr-2"></i>Servers:</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="n" value="100" min="1" max="300">
+        <input class="bg-gray-50 border border-gray-300 text-blue-600 font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="n" value="100" min="1" max="300">
       </div>
       <div>
         <label class="block mb-2 text-sm font-medium text-white" for="m"><i class="fas fa-robot mr-2"></i>Hackers:</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="m" value="10" min="1" max="300">
+        <input class="bg-gray-50 border border-gray-300 text-blue-600 font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="m" value="10" min="1" max="300">
       </div>
       <div>
         <label class="block mb-2 text-sm font-medium text-white" for="lambda"><i class="fas fa-gun mr-2"></i>Expected attacks:</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="lambda" value="50" step="1" min="0" max="300">
+        <input class="bg-gray-50 border border-gray-300 text-blue-600 font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="lambda" value="50" step="1" min="0" max="300">
       </div>
       <div>
         <label class="block mb-2 text-sm font-medium text-white" for="p"><i class="far fa-clock mr-2"></i>Mid-Time:</label>
-        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="t" value="50" step="1" min="1">
+        <input class="bg-gray-50 border border-gray-300 text-blue-600 font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="t" value="50" step="1" min="1">
       </div>
       <div>
         <label class="block mb-2 text-sm font-medium text-white" for="jumpType"><i class="fas fa-list-ol mr-2"></i>Jump Type:</label>
-        <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" id="jumpType">
+        <select class="bg-gray-50 border border-gray-300 text-blue-600 font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" id="jumpType">
           <option value="1" selected>HW_1) Discrete 1 : 0</option>
           <option value="2">HW_2) Discrete 1 : -1</option>
           <option value="3">HW_3) Continous 1 : 0</option>
@@ -44,7 +44,7 @@
       </div>
       <div>
         <label class="block mb-2 text-sm font-medium text-white" for="p"><i class="fas fa-wave-square mr-2"></i>Frequency Type:</label>
-        <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" id="freqType">
+        <select class="bg-gray-50 border border-gray-300 text-blue-600 font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" id="freqType">
           <option value="Absolute" selected>Absolute</option>
           <option value="Relative">Relative</option>
         </select>
@@ -53,29 +53,29 @@
   </div>
   <!-- Line chart for trajectories -->
   <div class="glassCard m-4 shadow rounded-lg p-8 max-w-screen-xl mx-auto flex flex-col justify-center">
-    <canvas id="chartCanvas" class="my-4 bg-white rounded-lg"></canvas>
+    <canvas id="chartCanvas" class="glassChart my-4 rounded-lg"></canvas>
   </div>
   <!-- Bar chart for probability distribution -->
    <div class="grid grid-cols-2 max-w-screen-xl mx-auto">
       <div class="glassCard my-4 mr-4 shadow rounded-lg p-8 flex flex-col justify-center">
-          <canvas id="midDistributionCanvas" class="bg-white rounded-lg"></canvas>
-          <div class="text-center font-semibold mt-4">
+          <canvas id="midDistributionCanvas" class="glassChart rounded-lg"></canvas>
+          <div class="glassCard w-max mx-auto p-4 mt-4">
               <div>
-                <p class="text-orange-200">Mean at t: <span id="midMean">0.00</span></p>
+                <p class="text-orange-100 font-extrabold">Mean at t: <span class="font-semibold text-white italic" id="midMean">0.00</span></p>
               </div>
               <div>
-                <p class="text-orange-200">Standard Deviation at t: <span id="midStdDev">0.00</span></p>
+                <p class="text-orange-100 font-extrabold">Standard Deviation at t: <span class="font-semibold text-white italic" id="midStdDev">0.00</span></p>
               </div>
           </div>
       </div>
       <div class="glassCard my-4 ml-4 shadow rounded-lg p-8 flex flex-col justify-center">
-          <canvas id="distributionCanvas" class="bg-white rounded-lg"></canvas>
-          <div class="text-center font-semibold mt-4">
+          <canvas id="distributionCanvas" class="glassChart rounded-lg"></canvas>
+          <div class="glassCard w-max mx-auto p-4 mt-4">
               <div>
-                <p class="text-blue-200">Mean: <span id="mean">0.00</span></p>
+                <p class="text-blue-100 font-extrabold">Mean: <span class="font-semibold text-white italic" id="mean">0.00</span></p>
               </div>
               <div>
-                <p class="text-blue-200">Standard Deviation: <span id="stdDev">0.00</span></p>
+                <p class="text-blue-100 font-extrabold">Standard Deviation: <span class="font-semibold text-white italic" id="stdDev">0.00</span></p>
               </div>
           </div>
       </div>
