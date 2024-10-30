@@ -10,8 +10,42 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="h-svh">
+  <!-- Navigation Bar -->
+  <nav class="bg-blue-600 w-full fixed top-0 start-0 z-10">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <a href="#" class="text-white">
+          <h1 class="text-3xl font-bold">Guido Cesarano - 1803991</h1>
+          <h2 class="text-2xl font-semibold">Statistics Course a.a. 24/25</h2>
+      </a>
+      <button data-collapse-toggle="navbar-hamburger" type="button" class="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200" aria-controls="navbar-hamburger" aria-expanded="false">
+        <span class="sr-only">Open main menu</span>
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+        </svg>
+      </button>
+      <div class="hidden w-full" id="navbar-hamburger">
+        <ul class="flex flex-col font-medium mt-4 rounded-lg bg-gray-50">
+          <li>
+            <a href="/simulator.html" class="block py-2 px-3 text-white bg-blue-700 rounded" aria-current="page">Simulator</a>
+          </li>
+          <li>
+            <a href="/hw1.html" class="block py-2 px-3 text-white bg-blue-700 rounded" aria-current="page">Homework 1</a>
+          </li>
+          <li>
+            <a href="/hw2.html" class="block py-2 px-3 text-white bg-blue-700 rounded" aria-current="page">Homework 2</a>
+          </li>
+          <li>
+            <a href="/hw3.html" class="block py-2 px-3 text-white bg-blue-700 rounded" aria-current="page">Homework 3</a>
+          </li>
+          <li>
+            <a href="/hw4.html" class="block py-2 px-3 text-white bg-blue-700 rounded" aria-current="page">Homework 4</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
   <canvas id="background"></canvas>
-  <div class="glassCard m-4 shadow rounded-lg p-8 max-w-screen-xl mx-auto">
+  <div class="glassCard mt-32 mb-4 shadow rounded-lg p-8 max-w-screen-xl mx-auto">
     <h1 class="text-2xl font-bold text-white text-center">Stochastic Process Simulator</h1>
     <div class="flex justify-center my-4">
         <button class="text-blue-600 bg-white hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5" onclick="simulate()">Simulate</button>
