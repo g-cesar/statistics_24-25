@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Two Regression Lines with R² in Chart.js</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      canvas#background {
+          position: fixed; /* Usa 'fixed' per mantenere il canvas in posizione */
+          top: 0;
+          left: 0;
+          width: 100%; /* Imposta la larghezza al 100% */
+          height: 100%; /* Imposta l'altezza al 100% */
+          z-index: -1; /* Assicurati che sia dietro altri contenuti */
+          background-color: #000; /* Imposta il colore di sfondo */
+      }
+  
+      .glassCard{
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 16px;
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          height: max-content;
+      }
+
+      .glassChart{
+        background: hsla(0, 0%, 100%, 0.9);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        height: max-content;
+    }
+  
+      .glassHeader{
+          background: rgba(0, 132, 255, 0.2);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          height: max-content;
+      }
+    </style>
+</head>
+<body class="h-svh">
+    <nav class="glassHeader w-full fixed top-0 start-0 z-10">
+      <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <a href="#" class="text-white">
+            <h1 class="text-3xl font-bold">Guido Cesarano - 1803991</h1>
+            <h2 class="text-2xl font-semibold">Statistics Course a.a. 24/25</h2>
+        </a>
+        <button data-collapse-toggle="navbar-hamburger" type="button" class="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-white rounded-lg hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-200" aria-controls="navbar-hamburger" aria-expanded="false">
+          <span class="sr-only">Open main menu</span>
+          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+          </svg>
+        </button>
+        <div class="hidden w-full" id="navbar-hamburger">
+          <ul class="flex flex-col font-medium mt-4">
+            <li>
+              <a href="/statistics_24-25/hw1.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 1</a>
+            </li>
+            <li>
+              <a href="/statistics_24-25/hw2.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 2</a>
+            </li>
+            <li>
+              <a href="/statistics_24-25/hw3.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 3</a>
+            </li>
+            <li>
+              <a href="/statistics_24-25/hw4.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 4</a>
+            </li>
+            <li>
+                <a href="/statistics_24-25/hw5.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 5</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <canvas id="background"></canvas>
+
+    <main class="mt-32 mb-4 mx-4">
+        <div class="glassCard shadow rounded-lg p-8">
+            <h1 class="text-2xl font-bold text-white text-center">Regression lines in a random process</h1>
+            <div class="flex justify-center items-center my-4 gap-3">
+              <label class="block text-sm font-medium text-white" for="numPoints">Numero di punti:</label>
+              <input class="w-max bg-gray-50 border border-gray-300 text-blue-600 font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="numPoints" value="250" min="2" />
+              <button class="text-blue-600 bg-white hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5" onclick="generateChart()">Simulate</button>
+            </div>
+        </div>
+      
+          <div class="grid grid-cols-6 gap-3 my-4">
+              <div class="col-span-4 glassCard max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-center">
+                  <canvas id="regressionChart" class="glassChart m-4 rounded-lg" width="800" height="400"></canvas>
+              </div>
+              <div class="col-span-2 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
+                <div>
+                    <h1 class="text-xl font-semibold">Rette di regressione</h1>
+                    <p>
+                        Le rette di regressione indicano la minimizzazione della somma dei quadrati degli errori verticali ed orizzontali (cioè le differenze tra i valori osservati di  y ed x rispetto a quelli previsti).
+                        <span id="regressionLine1"></span>
+                        oppure
+                        <span id="regressionLine2"></span>
+                    </p>
+                </div>
+                <div>
+                    <h1 class="text-xl font-semibold mt-3">Relazione con R²</h1>
+                    <p>
+                        Il valore di  R^2  si riferisce alla precisione dell’adattamento per la regressione di  y  su  x (o viceversa)
+                        <br>
+                        <div class="text-center">
+                            \(R^2 = \left(\frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}\right)^2 = \rho_{X,Y}^2 = \)<span class="italic" id="rSquaredYOnX">0.00</span>
+                        </div>
+                    </p>
+                </div>
+              </div>
+          </div>
+          <div class="grid grid-cols-6 gap-3 my-4">
+            <div class="col-span-2 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
+                <div>
+                    <h1 class="text-xl font-semibold">Cauchy-Schwarz Inequality</h1>
+                    <p>
+                        To prove the Cauchy-Schwarz inequality in its simplest form, consider two vectors  \(\mathbf{u}\)  and  \(\mathbf{v}\)  in an inner product space. The inequality states:
+                        \[|\langle \mathbf{u}, \mathbf{v} \rangle| \leq \|\mathbf{u}\| \|\mathbf{v}\|\]
+                        where  \(\langle \mathbf{u}, \mathbf{v} \rangle\)  is the inner product of  \(\mathbf{u}\)  and  \(\mathbf{v}\) , and  \(\|\mathbf{u}\|\)  and  \(\|\mathbf{v}\|\)  are the norms of  \(\mathbf{u}\)  and  \(\mathbf{v}\) , defined by  \(\|\mathbf{u}\| = \sqrt{\langle \mathbf{u}, \mathbf{u} \rangle}\)  and  \(\|\mathbf{v}\| = \sqrt{\langle \mathbf{v}, \mathbf{v} \rangle}\)
+                    </p>
+                </div>
+                <div>
+                    <h1 class="text-xl font-semibold">Proof</h1>
+                    <p>
+                        1.	Consider the vector  \(\mathbf{w} = \mathbf{u} - \alpha \mathbf{v}\) , where \(\alpha\)  is a scalar.
+	                    2.	The norm of  \(\mathbf{w}\)  satisfies  \(\|\mathbf{w}\|^2 \geq 0\) (since norms are non-negative).
+	                    3.	Expanding  \(\|\mathbf{w}\|^2\)  in terms of  \(\alpha\) , we get: \[\|\mathbf{w}\|^2 = \langle \mathbf{w}, \mathbf{w} \rangle = \langle \mathbf{u} - \alpha \mathbf{v}, \mathbf{u} - \alpha \mathbf{v} \rangle\]
+                        4.	Expanding the inner product: \[\|\mathbf{w}\|^2 = \|\mathbf{u}\|^2 - 2 \alpha \langle \mathbf{u}, \mathbf{v} \rangle + \alpha^2 \|\mathbf{v}\|^2\]
+                        5.	To minimize  \(\|\mathbf{w}\|^2\) , choose  \(\alpha = \frac{\langle \mathbf{u}, \mathbf{v} \rangle}{\|\mathbf{v}\|^2}\) . Substituting  \(\alpha\) and simplifying, we get: \[\|\mathbf{w}\|^2 = \|\mathbf{u}\|^2 - \frac{|\langle \mathbf{u}, \mathbf{v} \rangle|^2}{\|\mathbf{v}\|^2} \geq 0\]
+                        6.	Rearranging gives: \[|\langle \mathbf{u}, \mathbf{v} \rangle|^2 \leq \|\mathbf{u}\|^2 \|\mathbf{v}\|^2\]
+                        7.	Taking the square root on both sides yields: \[|\langle \mathbf{u}, \mathbf{v} \rangle| \leq \|\mathbf{u}\| \|\mathbf{v}\|\]
+                    </p>
+                </div>
+            </div>
+            <div class="col-span-4 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
+                <div>
+                    <h1 class="text-xl font-semibold">Independence</h1>
+                    <p>
+                      Two random variables X and Y are said to be independent if the occurrence of one does not provide any information about the other. Mathematically, X and Y are independent if their joint probability distribution is the product of their individual distributions:
+                      \[P(X = x, Y = y) = P(X = x) \cdot P(Y = y)\]
+                      For continuous random variables, this translates to the joint probability density function (PDF):
+                      \[f_{X,Y}(x, y) = f_X(x) \cdot f_Y(y)\]
+                      Independence is a very strong condition. If X and Y are independent, then they are also uncorrelated, but the reverse is not necessarily true.
+                    </p>
+                </div>
+                <div>
+                    <h1 class="text-xl font-semibold mt-3">Uncorrelation</h1>
+                    <p>
+                      Two random variables X and Y are uncorrelated if their covariance is zero:
+                      \[\text{Cov}(X, Y) = E[(X - E[X])(Y - E[Y])] = 0\]
+                      This implies that there is no linear relationship between X and Y. Uncorrelation is thus a weaker condition than independence. In fact, uncorrelated variables can still have a non-linear relationship.
+                      For example, if X is a standard normal random variable, and Y = X^2, then X and Y are uncorrelated because \[E[X \cdot Y] = E[X \cdot X^2] = E[X^3] = 0\] for a symmetric distribution, like the normal distribution.
+                      However, X and Y are clearly not independent, as Y is completely determined by X.
+                    </p>
+                </div>
+                <div>
+                    <h1 class="text-xl font-semibold mt-3">Correlation Coefficient</h1>
+                        <p>
+                            The Pearson correlation coefficient is a normalized measure of linear relationship:
+                            \[\rho_{X,Y} = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}\]                        
+                        </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let chartInstance;
+
+        function generateRandomWalk(numPoints) {
+            let points = [];
+            let x = 0;
+            let y = Math.random() * 10;
+            for (let i = 0; i < numPoints; i++) {
+                x += (Math.random() * 2 - 1) * numPoints;
+                y += (Math.random() * 2 - 1 ) * numPoints;
+                radius = Math.random() * 4 + 1;
+                points.push({ x: x, y: y, radius: radius });
+            }
+            return points;
+        }
+
+        function calculateRegressionCoefficients(points, isYOnX = true) {
+            const n = points.length;
+            if (isYOnX) {
+                const sumX = points.reduce((acc, p) => acc + p.x, 0);
+                const sumY = points.reduce((acc, p) => acc + p.y, 0);
+                const sumXY = points.reduce((acc, p) => acc + p.x * p.y, 0);
+                const sumX2 = points.reduce((acc, p) => acc + p.x * p.x, 0);
+
+                const b = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+                const a = (sumY - b * sumX) / n;
+                return { a, b };
+            } else {
+                const sumX = points.reduce((acc, p) => acc + p.x, 0);
+                const sumY = points.reduce((acc, p) => acc + p.y, 0);
+                const sumXY = points.reduce((acc, p) => acc + p.x * p.y, 0);
+                const sumY2 = points.reduce((acc, p) => acc + p.y * p.y, 0);
+
+                const b = (n * sumXY - sumX * sumY) / (n * sumY2 - sumY * sumY);
+                const a = (sumX - b * sumY) / n;
+                return { a, b };
+            }
+        }
+
+        function generateRegressionLine(points, coefficients, isYOnX = true) {
+            const xMin = Math.min(...points.map(p => p.x));
+            const xMax = Math.max(...points.map(p => p.x));
+
+            if (isYOnX) {
+                return [
+                    { x: xMin, y: coefficients.b * xMin + coefficients.a },
+                    { x: xMax, y: coefficients.b * xMax + coefficients.a }
+                ];
+            } else {
+                const yMin = Math.min(...points.map(p => p.y));
+                const yMax = Math.max(...points.map(p => p.y));
+                return [
+                    { x: coefficients.b * yMin + coefficients.a, y: yMin },
+                    { x: coefficients.b * yMax + coefficients.a, y: yMax }
+                ];
+            }
+        }
+
+        function calculateRSquared(points, coefficients, isYOnX = true) {
+            if (isYOnX) {
+                const meanY = points.reduce((acc, p) => acc + p.y, 0) / points.length;
+                const ssTotal = points.reduce((acc, p) => acc + Math.pow(p.y - meanY, 2), 0);
+                const ssResidual = points.reduce((acc, p) => acc + Math.pow(p.y - (coefficients.b * p.x + coefficients.a), 2), 0);
+                return 1 - (ssResidual / ssTotal);
+            } else {
+                const meanX = points.reduce((acc, p) => acc + p.x, 0) / points.length;
+                const ssTotal = points.reduce((acc, p) => acc + Math.pow(p.x - meanX, 2), 0);
+                const ssResidual = points.reduce((acc, p) => acc + Math.pow(p.x - (coefficients.b * p.y + coefficients.a), 2), 0);
+                return 1 - (ssResidual / ssTotal);
+            }
+        }
+
+        function generateChart() {
+            const numPoints = parseInt(document.getElementById('numPoints').value);
+            const dataPoints = generateRandomWalk(numPoints);
+
+            // Calcola i coefficienti per entrambe le rette di regressione
+            const coefficientsYOnX = calculateRegressionCoefficients(dataPoints, true);
+            const coefficientsXOnY = calculateRegressionCoefficients(dataPoints, false);
+
+            // Genera le rette di regressione
+            const regressionLineYOnX = generateRegressionLine(dataPoints, coefficientsYOnX, true);
+            const regressionLineXOnY = generateRegressionLine(dataPoints, coefficientsXOnY, false);
+
+            // Calcola R^2 per entrambe le rette
+            const rSquaredYOnX = calculateRSquared(dataPoints, coefficientsYOnX, true);
+            document.getElementById('rSquaredYOnX').textContent = ` ${rSquaredYOnX.toFixed(4)}`;
+            document.getElementById('regressionLine1').textContent = `\\[ y = ${coefficientsYOnX.b.toFixed(2)}x + ${coefficientsYOnX.a.toFixed(2)} \\]`;
+            document.getElementById('regressionLine2').textContent = `\\[ x = ${coefficientsXOnY.b.toFixed(2)}y + ${coefficientsXOnY.a.toFixed(2)} \\]`;
+
+            MathJax.typesetPromise();
+
+            const ctx = document.getElementById('regressionChart').getContext('2d');
+
+            // Distruggi il grafico esistente se già presente
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            // Crea un nuovo grafico con entrambe le rette di regressione
+            chartInstance = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Data Points',
+                            data: dataPoints,
+                            borderColor: 'white',
+                            backgroundColor: 'blue',
+                            showLine: false,
+                            pointRadius: (context) => context.raw.radius
+                        },
+                        {
+                            label: `Regression Line y on x`,
+                            data: regressionLineYOnX,
+                            type: 'line',
+                            borderColor: 'red',
+                            backgroundColor: 'red',
+                            fill: false,
+                            borderWidth: 2
+                        },
+                        {
+                            label: `Regression Line x on y`,
+                            data: regressionLineXOnY,
+                            type: 'line',
+                            borderColor: 'green',
+                            backgroundColor: 'green',
+                            fill: false,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        x: { type: 'linear', position: 'bottom', title: { display: true, text: 'X Axis' } },
+                        y: { title: { display: true, text: 'Y Axis' } }
+                    }
+                }
+            });
+        }
+
+        // Inizializza il grafico al caricamento
+        window.onload = generateChart;
+    </script>
+    <script src="background.js"></script>
+</body>
+</html>
