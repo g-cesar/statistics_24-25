@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Convergence of the empirical distribution to the theoretical distribution</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      canvas#background {
+          position: fixed; /* Usa 'fixed' per mantenere il canvas in posizione */
+          top: 0;
+          left: 0;
+          width: 100%; /* Imposta la larghezza al 100% */
+          height: 100%; /* Imposta l'altezza al 100% */
+          z-index: -1; /* Assicurati che sia dietro altri contenuti */
+          background-color: #000; /* Imposta il colore di sfondo */
+      }
+  
+      .glassCard{
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 16px;
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          height: max-content;
+      }
+
+      .glassChart{
+        background: rgba(0, 0, 0, 0.9);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        height: max-content;
+    }
+  
+      .glassHeader{
+          background: rgba(0, 132, 255, 0.2);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          height: max-content;
+      }
+    </style>
+</head>
+<body class="h-svh">
+    <nav class="glassHeader w-full fixed top-0 start-0 z-10">
+      <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <a href="#" class="text-white">
+            <h1 class="text-3xl font-bold">Guido Cesarano - 1803991</h1>
+            <h2 class="text-2xl font-semibold">Statistics Course a.a. 24/25</h2>
+        </a>
+        <button data-collapse-toggle="navbar-hamburger" type="button" class="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-white rounded-lg hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-200" aria-controls="navbar-hamburger" aria-expanded="false">
+          <span class="sr-only">Open main menu</span>
+          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+          </svg>
+        </button>
+        <div class="hidden w-full" id="navbar-hamburger">
+          <ul class="flex flex-col font-medium mt-4">
+            <li>
+              <a href="/statistics_24-25/hw1.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 1</a>
+            </li>
+            <li>
+              <a href="/statistics_24-25/hw2.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 2</a>
+            </li>
+            <li>
+              <a href="/statistics_24-25/hw3.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 3</a>
+            </li>
+            <li>
+              <a href="/statistics_24-25/hw4.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 4</a>
+            </li>
+            <li>
+                <a href="/statistics_24-25/hw5.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 5</a>
+            </li>
+            <li>
+                <a href="/statistics_24-25/hw6.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 6</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <canvas id="background"></canvas>
+
+    <main class="mt-32 mb-4 mx-4">
+        <div class="glassCard shadow rounded-lg p-8">
+            <h1 class="text-2xl font-bold text-white text-center">Convergence of the empirical distribution to the theoretical distribution</h1>
+            <div class="flex justify-center items-center my-4 gap-3">
+              <label class="block text-sm font-medium text-white" for="n_max">Samples:</label>
+              <input class="w-max bg-gray-50 border border-gray-300 text-blue-600 font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="n_max" value="1000" min="1" />
+              <button id="buttonSimulate" class="text-blue-600 bg-white hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5" onclick="simulate()">Simulate</button>
+            </div>
+        </div>
+      
+          <div class="grid grid-cols-6 gap-3 my-4">
+              <div class="col-span-4 glassCard max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-center">
+                  <canvas id="radarChart" class="glassChart m-4 rounded-lg"></canvas>
+              </div>
+              <div class="col-span-2 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
+                <div>
+                    <h1 class="text-xl font-semibold">Theoretical distribution values</h1>
+                    <p>
+                        <strong>Mean:</strong> \(\mu = \sum_{i=1}^{n} i \cdot p_i = \)<span class="italic" id="theoreticalMean">0.00</span> 
+                        <br>
+                        <strong>Variance:</strong> \(\sigma^2 = \sum_{i=1}^{n} p_i \cdot (i - \mu)^2 = \)<span class="italic" id="theoreticalVariance">0.00</span>
+                    </p>
+                </div>
+                <div>
+                    <h1 class="text-xl font-semibold mt-3">Empirical distribution values</h1>
+                    <p>
+                        <strong>Samples:</strong> <span class="italic" id="numSample">0</span>
+                    </p>
+                    <p>
+                        <strong>Mean:</strong> \(\mu = \sum_{i=1}^{n} i \cdot p_i = \)<span class="italic" id="empiricalMean">0.00</span> 
+                        <br>
+                        <strong>Variance:</strong> \(\sigma^2 = \sum_{i=1}^{n} p_i \cdot (i - \mu)^2 = \)<span class="italic" id="empiricalVariance">0.00</span>
+                    </p>
+                </div>
+              </div>
+          </div>
+          <div class="grid grid-cols-6 gap-3 my-4">
+            <div class="col-span-2 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
+                <div>
+                    <h1 class="text-xl font-semibold mb-1">Fundamentals of the Fundamental Theorem of Calculus</h1>
+                    <p>
+                        The Fundamental Theorem of Calculus consists of two main parts:
+                    </p>
+                    <p>
+                        <b>1.First Part:</b> It states that if  f  is a continuous function on an interval \([a, b]\) and  \(F\)  is a function such that  \(F{\prime}(x) = f(x)\) , then:
+                        \[
+                        \int_a^b f(x) \, dx = F(b) - F(a)
+                        \]
+                    </p>
+                    <p>
+                        <b>2.Second Part:</b> If  \(F(x)\)  is defined as the integral of  \(f(x)\)  from an initial point  \(a\)  up to  \(x\) , then  \(F(x)\)  is a continuous and differentiable function (if  \(f\)  is continuous) such that:
+                        \[
+                        \frac{d}{dx} F(x) = f(x)    
+                        \]                    
+                    </p>
+                </div>
+                <div>
+                    <h1 class="text-xl font-semibold mb-1">Application to Probability Density Functions and Cumulative Distribution Functions</h1>
+                    <p>
+                        In the context of probability theory, probability density functions (PDF) and cumulative distribution functions (CDF) are related by the Fundamental Theorem of Calculus:
+                    </p>
+                    <p>
+                        <b>Probability Density Function (PDF):</b> If a continuous random variable  \(X\)  has a probability distribution described by a density  \(f(x)\) , then  \(f(x)\)  represents the probability density at a point  \(x\) , and satisfies:
+                        \[P(a \leq X \leq b) = \int_a^b f(x) \, dx\]
+                    </p>
+                    <p>
+                        <b>Cumulative Distribution Function (CDF):</b> The cumulative distribution function  \(F(x)\)  of  \(X\) is given by:
+                        \[F(x) = P(X \leq x) = \int_{-\infty}^x f(t) \, dt\]
+                    </p>
+                </div>
+            </div>
+            <div class="col-span-4 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
+                <div>
+                    <h1 class="text-xl font-semibold">Relationship between PDF and CDF through the Fundamental Theorem of Calculus</h1>
+                    <p>
+                        By the Fundamental Theorem of Calculus, we can differentiate  \(F(x)\)  to obtain the density  \(f(x)\) :
+                        \[f(x) = \frac{d}{dx} F(x)\]
+                        This indicates that the derivative of the CDF with respect to  \(x\) yields the PDF.
+                    </p>
+                </div>
+                <div>
+                    <h1 class="text-xl font-semibold mt-3">Simple Proof</h1>
+                    <p>
+                        Consider a continuous random variable  \(X\)  with density function  \(f(x)\)  and cumulative distribution function  \(F(x)\) . We demonstrate the relationship between  \(F(x)\)  and  \(f(x)\)
+                    </p>
+                    <p>
+                        <b>1.Definition of the CDF:</b> For a variable  \(X\) , the CDF is:
+                        \[F(x) = \int_{-\infty}^x f(t) \, dt\]
+                    </p>
+                    <p>
+                        <b>2.Derivative of the CDF:</b> Applying the Fundamental Theorem of Calculus to differentiate  \(F(x)\)  with respect to  \(x\) :
+                        \[
+                        \frac{d}{dx} F(x) = \frac{d}{dx} \left( \int_{-\infty}^x f(t) \, dt \right) = f(x)
+                        \]
+                    </p>
+                    <p>
+                        Thus,  \(f(x)\)  is simply the derivative of  \(F(x)\) . This result is useful in probability theory because it shows that, given the CDF of a random variable, we can obtain its PDF by differentiating the CDF with respect to  \(x\) .
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    // Definizione della distribuzione discreta con probabilità arbitrarie
+    const distribution = Array.from({ length: 10 }, () => Math.random());
+    const sum = distribution.reduce((acc, val) => acc + val, 0);
+    for (let i = 0; i < distribution.length; i++){
+        distribution[i] /= sum;
+    }
+    const theoreticalMean = distribution.reduce((acc, p, i) => acc + i * p, 0);
+    const theoreticalVariance = distribution.reduce((acc, p, i) => acc + p * (i - theoreticalMean) ** 2, 0);
+
+    //Mostra i valori teorici
+    document.getElementById('theoreticalMean').textContent = `${theoreticalMean.toFixed(4)}`;
+    document.getElementById('theoreticalVariance').textContent = `${theoreticalVariance.toFixed(4)}`;
+
+    // Variabili per il calcolo incrementale
+    let sampleMean = 0;
+    let sampleVariance = 0;
+    let n = 0; // Dimensione del campione
+    const empiricalDist = Array(distribution.length).fill(0);
+
+    // Funzione per generare una realizzazione dalla distribuzione discreta
+    function generateSample() {
+        const rand = Math.random();
+        let cumulativeProb = 0;
+        for (let i = 0; i < distribution.length; i++) {
+        cumulativeProb += distribution[i];
+        if (rand <= cumulativeProb) {
+            return i;
+        }
+        }
+        return distribution.length - 1;
+    }
+
+    // Funzione per aggiornare i dati empirici e calcolare media e varianza incrementali
+    function updateStatistics(sample) {
+        // Incrementa la conta empirica
+        empiricalDist[sample]++;
+        n++;
+        
+        // Calcolo media e varianza usando il metodo incrementale di Welford
+        const delta = sample - sampleMean;
+        sampleMean += delta / n;
+        sampleVariance += delta * (sample - sampleMean);
+    }
+
+    let radarChart;
+
+    // Distruggi il grafico esistente se già presente
+    if (radarChart) {
+        radarChart.destroy();
+    }
+
+    // Configurazione del radar chart con Chart.js
+    radarChart = new Chart(document.getElementById("radarChart"), {
+        type: 'line',
+        data: {
+        labels: Array.from({ length: distribution.length }, (_, i) => (i / (distribution.length - 1)).toFixed(2)),
+        datasets: [
+            {
+            label: 'Theoretical Distribution',
+            data: distribution,
+            borderColor: 'rgba(54, 162, 235, 0.6)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderWidth: 2
+            },
+            {
+            label: 'Empirical Distribution',
+            data: empiricalDist.map(frequency => frequency / n),
+            borderColor: 'rgba(255, 99, 132, 0.6)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderWidth: 2
+            }
+        ]
+        },
+        options: {
+        scales: {
+            r: {
+            beginAtZero: true,
+            suggestedMax: Math.max(...distribution) + 0.1
+            }
+        }
+        }
+    });
+
+    // Funzione per aggiornare il grafico e mostrare la convergenza
+    function updateChart() {
+        radarChart.data.datasets[1].data = empiricalDist.map(frequency => frequency / n);
+        radarChart.update();
+    }
+
+    // Funzione principale per generare il campione e aggiornare statistiche e grafico
+    function simulate() {
+        const sample = generateSample();
+        updateStatistics(sample);
+        updateChart();
+        
+        document.getElementById('numSample').textContent = `${n}`;
+        document.getElementById('empiricalMean').textContent = `${sampleMean.toFixed(4)}`;
+        document.getElementById('empiricalVariance').textContent = `${(sampleVariance / n).toFixed(4)}`;
+
+        let n_max = document.getElementById('n_max').value;
+
+        if (n < n_max) { // Imposta la dimensione massima del campione
+        setTimeout(simulate, 25); // Ritardo per visualizzare la convergenza
+        }
+    }
+    </script>
+    <script src="background.js"></script>
+</body>
+</html>
