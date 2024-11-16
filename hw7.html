@@ -89,10 +89,10 @@
 
     <main class="mt-32 mb-4 mx-4">
         <div class="glassCard shadow rounded-lg p-8">
-            <h1 class="text-2xl font-bold text-white text-center">Convergence of the empirical distribution to the theoretical distribution</h1>
+            <h1 class="text-2xl font-bold text-white text-center">Empirical distribution samples compared to the theoretical distribution</h1>
             <div class="flex justify-center items-center my-4 gap-3">
               <label class="block text-sm font-medium text-white" for="n_max">Samples:</label>
-              <input class="w-max bg-gray-50 border border-gray-300 text-blue-600 font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="n_max" value="10" min="1" />
+              <input class="w-max bg-gray-50 border border-gray-300 text-blue-600 font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="n_max" value="1" min="1" />
               <button id="buttonSimulate" class="text-blue-600 bg-white hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5" onclick="simulate(1)">Add</button>
             </div>
         </div>
@@ -105,7 +105,7 @@
                 <div>
                     <h1 class="text-xl font-semibold">Theoretical distribution values</h1>
                     <p class="my-3">
-                        <span class="italic" id="theoreticalDistribution"></span>
+                        <span class="italic border border-white rounded-lg p-1 bg-[#00000080] shadow-xl" id="theoreticalDistribution"></span>
                     </p>
                     <p>
                         <strong>Mean:</strong> \(\mu = \sum_{i=1}^{n} i \cdot p_i = \)<span class="italic" id="theoreticalMean">0.00</span> 
@@ -115,7 +115,7 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-semibold mt-3">Empirical distributions average</h1>
-                    <ul id="empiricalDistributions" class="my-3 h-6 overflow-auto"></ul>
+                    <ul id="empiricalDistributions" class="my-3 h-14 overflow-auto italic hidden border border-white rounded-lg p-1 bg-[#00000080]"></ul>
                     <p>
                         <strong>Samples:</strong> <span class="italic" id="numSample">0</span>
                         <br>
@@ -124,69 +124,44 @@
                         <strong>Average of variances:</strong> \(\frac{1}{n} \sum_{i=1}^{n} s_i^2 = \) <span class="italic" id="empiricalPartialVariance">0.00</span>
                     </p>
                 </div>
+                <div class="border-t border-white">
+                    <p class="mt-3 italic text-xs">
+                        <b>Disclaimer:</b> statistical calculations are performed on the raw counts rather than normalized values.
+                    </p>
+                </div>
               </div>
           </div>
           <div class="grid grid-cols-6 gap-3 my-4">
-            <div class="col-span-2 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
+            <div class="col-span-4 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
                 <div>
-                    <h1 class="text-xl font-semibold mb-1">Fundamentals of the Fundamental Theorem of Calculus</h1>
+                    <h1 class="text-xl font-semibold mb-1">Mean of the Sample Averages</h1>
                     <p>
-                        The Fundamental Theorem of Calculus consists of two main parts:
-                    </p>
-                    <p>
-                        <b>1.First Part:</b> It states that if  f  is a continuous function on an interval \([a, b]\) and  \(F\)  is a function such that  \(F{\prime}(x) = f(x)\) , then:
-                        \[
-                        \int_a^b f(x) \, dx = F(b) - F(a)
-                        \]
-                    </p>
-                    <p>
-                        <b>2.Second Part:</b> If  \(F(x)\)  is defined as the integral of  \(f(x)\)  from an initial point  \(a\)  up to  \(x\) , then  \(F(x)\)  is a continuous and differentiable function (if  \(f\)  is continuous) such that:
-                        \[
-                        \frac{d}{dx} F(x) = f(x)    
-                        \]                    
+                        According to the Law of Large Numbers, as the number of samples increases, the average of the sample means will converge to the mean of the parent distribution. This means that if we take a sufficiently large number of samples, the mean of these sample averages should be very close to the theoretical mean of the parent distribution.
                     </p>
                 </div>
-                <div>
-                    <h1 class="text-xl font-semibold mb-1">Application to Probability Density Functions and Cumulative Distribution Functions</h1>
+                <div class="mt-3">
+                    <h1 class="text-xl font-semibold mb-1">Variance of the Sample Averages</h1>
                     <p>
-                        In the context of probability theory, probability density functions (PDF) and cumulative distribution functions (CDF) are related by the Fundamental Theorem of Calculus:
-                    </p>
-                    <p>
-                        <b>Probability Density Function (PDF):</b> If a continuous random variable  \(X\)  has a probability distribution described by a density  \(f(x)\) , then  \(f(x)\)  represents the probability density at a point  \(x\) , and satisfies:
-                        \[P(a \leq X \leq b) = \int_a^b f(x) \, dx\]
-                    </p>
-                    <p>
-                        <b>Cumulative Distribution Function (CDF):</b> The cumulative distribution function  \(F(x)\)  of  \(X\) is given by:
-                        \[F(x) = P(X \leq x) = \int_{-\infty}^x f(t) \, dt\]
+                        According to the Central Limit Theorem, the variance of the sample means is related to the variance of the parent distribution by the formula:
+                        \[ \text{Var}(\bar{X}) = \frac{\sigma^2}{n} \]
+                        where \( \sigma^2 \) is the variance of the parent distribution and \( n \) is the sample size. This implies that the variance of the sample means decreases as the sample size increases. However, when considering the average of the sample variances, we expect it to be close to the theoretical variance of the parent distribution, especially as the number of samples increases.
                     </p>
                 </div>
             </div>
-            <div class="col-span-4 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
+            <div class="col-span-2 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
                 <div>
-                    <h1 class="text-xl font-semibold">Relationship between PDF and CDF through the Fundamental Theorem of Calculus</h1>
+                    <h1 class="text-xl font-semibold mb-3">Practical Implications</h1>
                     <p>
-                        By the Fundamental Theorem of Calculus, we can differentiate  \(F(x)\)  to obtain the density  \(f(x)\) :
-                        \[f(x) = \frac{d}{dx} F(x)\]
-                        This indicates that the derivative of the CDF with respect to  \(x\) yields the PDF.
+                        In practice, when we calculate the average of the sample means and the average of the sample variances, we should observe the following:
                     </p>
-                </div>
-                <div>
-                    <h1 class="text-xl font-semibold mt-3">Simple Proof</h1>
-                    <p>
-                        Consider a continuous random variable  \(X\)  with density function  \(f(x)\)  and cumulative distribution function  \(F(x)\) . We demonstrate the relationship between  \(F(x)\)  and  \(f(x)\)
+                    <p class="mt-3">
+                        <b>Convergence of Means:</b> The average of the sample means should be very close to the theoretical mean of the parent distribution, validating the Law of Large Numbers.
                     </p>
-                    <p>
-                        <b>1.Definition of the CDF:</b> For a variable  \(X\) , the CDF is:
-                        \[F(x) = \int_{-\infty}^x f(t) \, dt\]
+                    <p class="mt-3">
+                        <b>Consistency of Variances:</b> The average of the sample variances should be close to the theoretical variance of the parent distribution, confirming that our samples are representative of the parent distribution.
                     </p>
-                    <p>
-                        <b>2.Derivative of the CDF:</b> Applying the Fundamental Theorem of Calculus to differentiate  \(F(x)\)  with respect to  \(x\) :
-                        \[
-                        \frac{d}{dx} F(x) = \frac{d}{dx} \left( \int_{-\infty}^x f(t) \, dt \right) = f(x)
-                        \]
-                    </p>
-                    <p>
-                        Thus,  \(f(x)\)  is simply the derivative of  \(F(x)\) . This result is useful in probability theory because it shows that, given the CDF of a random variable, we can obtain its PDF by differentiating the CDF with respect to  \(x\) .
+                    <p class="mt-3">
+                        This relationship is crucial in statistical analysis as it helps in understanding the behavior of sample statistics in relation to the population parameters.
                     </p>
                 </div>
             </div>
@@ -212,10 +187,17 @@
     let sampleMean = 0;
     let sampleVariance = 0;
     let n = 0; // Dimensione del campione
-    const empiricalDist = Array(distribution.length).fill(0);
+    let empiricalDist = Array(distribution.length).fill(0);
 
     // Funzione per generare una realizzazione dalla distribuzione discreta
     function generateSample() {
+
+        // Estendi empiricalDist se necessario
+        const newLength = Math.floor(Math.random() * distribution.length) + 1;
+        if (newLength > empiricalDist.length) {
+            empiricalDist = empiricalDist.concat(Array(newLength - empiricalDist.length).fill(0));
+        }
+
         const rand = Math.random();
         let cumulativeProb = 0;
         for (let i = 0; i < distribution.length; i++) {
@@ -227,16 +209,32 @@
         return distribution.length - 1;
     }
 
+    // Funzione per calcolare la media di un array
+    function calculateMean(arr) {
+        const totalFrequency = arr.reduce((acc, val) => acc + val, 0);
+        const weightedSum = arr.reduce((acc, val, i) => acc + i * val, 0);
+        return weightedSum / totalFrequency;
+    }
+
+    // Funzione per calcolare la varianza di un array
+    function calculateVariance(arr, mean) {
+        const totalFrequency = arr.reduce((acc, val) => acc + val, 0);
+        const sumOfSquares = arr.reduce((acc, val, i) => acc + val * (i - mean) ** 2, 0);
+        return sumOfSquares / totalFrequency;
+    }
+
     // Funzione per aggiornare i dati empirici e calcolare media e varianza incrementali
     function updateStatistics(sample) {
         // Incrementa la conta empirica
-        empiricalDist[sample]++;
+        if (sample < empiricalDist.length) {
+            // Incrementa la conta empirica
+            empiricalDist[sample]++;
+        }
         n++;
         
-        // Calcolo media e varianza usando il metodo incrementale di Welford
-        const delta = sample - sampleMean;
-        sampleMean += delta / n;
-        sampleVariance += delta * (sample - sampleMean);
+        // Calcolo media e varianza
+        sampleMean = calculateMean(empiricalDist);
+        sampleVariance = calculateVariance(empiricalDist, sampleMean);
     }
 
     let radarChart;
@@ -257,7 +255,7 @@
                 data: distribution,
                 borderColor: 'rgba(255, 255, 0, 0.6)',
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderWidth: 10
+                borderWidth: 6
             }
         ]
         },
@@ -296,8 +294,12 @@
 
         // Aggiungi la distribuzione empirica alla lista
         const ulElement = document.getElementById('empiricalDistributions');
+        if (ulElement.classList.contains('hidden')){
+            ulElement.classList.remove('hidden');
+        }
         const liElement = document.createElement('li');
-        liElement.textContent = `[${empiricalDist.map(frequency => (frequency / n).toFixed(4)).join(', ')}]`;
+        liElement.classList.add('border-b', 'border-white','shadow-xl', 'pb-1');
+        liElement.innerHTML = `[${empiricalDist.map(frequency => (frequency / n).toFixed(4)).join(', ')}] <br> Mean: ${sampleMean.toFixed(2)} - Variance: ${(sampleVariance / n).toFixed(2)}`;
         ulElement.insertBefore(liElement, ulElement.firstChild);
     }
 
