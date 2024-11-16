@@ -119,9 +119,11 @@
                     <p>
                         <strong>Samples:</strong> <span class="italic" id="numSample">0</span>
                         <br>
-                        <strong>Average of means:</strong> \(\frac{1}{n} \sum_{i=1}^{n} \bar{x}_i = \) <span class="italic" id="empiricalPartialMean">0.00</span> 
+                        <strong>Average of sample means:</strong> \(\frac{1}{n} \sum_{i=1}^{n} \bar{x}_i = \) <span class="italic" id="empiricalPartialMean">0.00</span> 
                         <br>
-                        <strong>Average of variances:</strong> \(\frac{1}{n} \sum_{i=1}^{n} s_i^2 = \) <span class="italic" id="empiricalPartialVariance">0.00</span>
+                        <strong>Average of sample variances:</strong> \(\frac{1}{n} \sum_{i=1}^{n} s_i^2 = \) <span class="italic" id="empiricalPartialVariance">0.00</span>
+                        <br>
+                        <strong>Variance of sample means:</strong> \( \sum_{i=1}^{n}\text{Var}(\bar{x_i}) = \) <span class="italic" id="empiricalPartialVarianceOfMeans">0.00</span>
                     </p>
                 </div>
                 <div class="border-t border-white">
@@ -132,37 +134,119 @@
               </div>
           </div>
           <div class="grid grid-cols-6 gap-3 my-4">
-            <div class="col-span-4 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
+            <div class="col-span-2 glassCard text-white max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-start">
                 <div>
-                    <h1 class="text-xl font-semibold mb-1">Mean of the Sample Averages</h1>
+                    <h1 class="text-xl font-semibold">Theoretical Mean \( \mu \)</h1>
                     <p>
-                        According to the Law of Large Numbers, as the number of samples increases, the average of the sample means will converge to the mean of the parent distribution. This means that if we take a sufficiently large number of samples, the mean of these sample averages should be very close to the theoretical mean of the parent distribution.
+                        The theoretical mean of a distribution is defined as:
+                        \( \mu = \sum_{i} x_i \cdot P(X = x_i) \)
                     </p>
                 </div>
                 <div class="mt-3">
-                    <h1 class="text-xl font-semibold mb-1">Variance of the Sample Averages</h1>
+                    <h1 class="text-xl font-semibold">Sample Mean \( \bar{x} \)</h1>
                     <p>
-                        According to the Central Limit Theorem, the variance of the sample means is related to the variance of the parent distribution by the formula:
-                        \[ \text{Var}(\bar{X}) = \frac{\sigma^2}{n} \]
-                        where \( \sigma^2 \) is the variance of the parent distribution and \( n \) is the sample size. This implies that the variance of the sample means decreases as the sample size increases. However, when considering the average of the sample variances, we expect it to be close to the theoretical variance of the parent distribution, especially as the number of samples increases.
+                        When we draw a sample of size \( n \) from the population, the sample mean \( \bar{x} \) is calculated as:
+
+                        \( \bar{x} = \frac{1}{n} \sum_{i=1}^n x_i \)   
+                    </p>
+                    <p>
+                        <b>Properties of the sample mean:</b>
+
+                        <ul>
+                            <li>The sample mean is a random variable because it depends on the observed values, which are drawn randomly from the population.</li>
+                            <li>The expected value of \( \bar{x} \) is: \( \mathbb{E}[\bar{x}] = \mu \)</li>
+                        </ul>
+
+                        This means that \( \bar{x} \) is an unbiased estimate of the theoretical mean \( \mu \).
+                    </p>
+                </div>
+                <div class="mt-3">
+                    <h1 class="text-xl font-semibold">Mean of Sample Means</h1>
+                    <p>
+                        When we draw multiple samples from the same population, we can calculate:
+
+                        \[ \text{Mean of sample means} = \frac{1}{N} \sum_{i=1}^N \bar{x}_i \]
+                    </p>
+                </div>
+                <div class="mt-3">
+                    <h1 class="text-xl font-semibold">Theoretical Variance \( \sigma^2 \)</h1>
+                    <p>
+                        The theoretical variance of a distribution is defined as: \( \sigma^2 = \sum_{i} (x_i - \mu)^2 \cdot P(X = x_i) \)
+                    </p>
+                </div>
+                <div class="mt-3">
+                    <h1 class="text-xl font-semibold">Sample Variance \( s^2 \)</h1>
+                    <p>
+                        For a sample of size \( n \), the sample variance \( s^2 \) is calculated as:
+
+                        \( s^2 = \frac{1}{n - 1} \sum_{i=1}^n (x_i - \bar{x})^2 \)        
+                        
+                        <br>
+
+                        <b>Properties of sample variance:</b>
+
+                        The sample variance \( s^2 \) is an unbiased estimator of the theoretical variance \( \sigma^2 \), meaning:
+
+                        \( \mathbb{E}[s^2] = \sigma^2 \)
+
+                        <br>
+
+                        This unbiasedness is achieved by dividing by \( n - 1 \) (degrees of freedom) instead of \( n \).
+                    </p>
+                </div>
+                <div class="mt-3">
+                    <h1 class="text-xl font-semibold">Mean of Sample Variances</h1>
+                    <p>
+                        When we draw multiple samples from the same population, we can calculate:
+
+                        \[ \text{Mean of sample variances} = \frac{1}{N} \sum_{i=1}^N s_i^2 \]
                     </p>
                 </div>
             </div>
-            <div class="col-span-2 glassCard text-white h-full max-w-screen-lg shadow rounded-lg p-3 flex flex-col justify-evenly">
-                <div>
-                    <h1 class="text-xl font-semibold mb-3">Practical Implications</h1>
-                    <p>
-                        In practice, when we calculate the average of the sample means and the average of the sample variances, we should observe the following:
-                    </p>
-                    <p class="mt-3">
-                        <b>Convergence of Means:</b> The average of the sample means should be very close to the theoretical mean of the parent distribution, validating the Law of Large Numbers.
-                    </p>
-                    <p class="mt-3">
-                        <b>Consistency of Variances:</b> The average of the sample variances should be close to the theoretical variance of the parent distribution, confirming that our samples are representative of the parent distribution.
-                    </p>
-                    <p class="mt-3">
-                        This relationship is crucial in statistical analysis as it helps in understanding the behavior of sample statistics in relation to the population parameters.
-                    </p>
+            <div class="col-span-4 flex flex-col justify-start">
+                <div class="grid grid-rows-2 gap-3">
+                    <div class="glassCard text-white max-w-screen-lg shadow rounded-lg p-3">
+                        <h1 class="text-xl font-semibold mb-3">Why does the average of sample means approach \( \mu \)?</h1>
+                        <p>
+                            The mean of sample means is an arithmetic mean of multiple random variables \( (\bar{x}_1, \bar{x}_2, \ldots, \bar{x}N) \).
+                            Thanks to the <b>linearity of expectation</b>, we know that:
+                            \[ \mathbb{E}\left[\frac{1}{N} \sum{i=1}^N \bar{x}i \right] = \frac{1}{N} \sum{i=1}^N \mathbb{E}[\bar{x}_i] = \mu \]
+                        </p>
+                        <p>
+                            Moreover, the <b>law of large numbers</b> ensures that, as the number of samples \( N \) increases, the mean of sample means converges to the expected value of the sample mean, which is \( \mu \), as shown below:
+                            \[
+                            \frac{1}{N} \sum_{i=1}^N \bar{x}_i \xrightarrow{p} \mu \quad \text{(convergence in probability)}
+                            \]
+                        </p>
+                        <p>
+                            We also need to bear in mind that each sample introduces random errors in the estimation of \( \mu \). However, these <b>random errors are symmetric</b> around \( \mu \) (they can be both positive and negative), so when we compute the mean of sample means, these errors tend to cancel out, reducing the overall error.
+                        </p>
+                        <p>
+                            \[ \]
+                            Finally, the <b>variance of the sample mean</b> decreases as the sample size \( n \) increases. Formally:
+    
+                            \[ \text{Var}(\bar{x}) = \frac{\sigma^2}{n} \]               
+    
+                            This means that, with larger samples, each sample mean is closer to \( \mu \), improving the overall accuracy.
+                        </p>
+                    </div>
+                    <div class="glassCard text-white max-w-screen-lg shadow rounded-lg p-3">
+                        <h1 class="text-xl font-semibold mb-3">Why does the mean of sample variances approach \( \sigma^2 \)?</h1>
+                        <p>
+                            The mean of sample means is an arithmetic mean of multiple random variables \( (\bar{s}_1, \bar{s}_2, \ldots, \bar{s}N) \).
+                            Thanks to the <b>linearity of expectation</b>, we know that:
+                            \[ \mathbb{E}\left[\frac{1}{N} \sum{i=1}^N s_i^2 \right] = \frac{1}{N} \sum{i=1}^N \mathbb{E}[s_i] = \sigma^2 \]
+                        </p>
+                        <p>
+                            As per the mean of sample means, the <b>law of large numbers</b> ensures that, as the number of samples \( N \) increases, the mean of sample variances converges to the expected value of the sample variance, which is \( \sigma^2 \), as shown below:
+                            \[
+                            \frac{1}{N} \sum_{i=1}^N s_i^2 \xrightarrow{p} \sigma^2 \quad \text{(convergence in probability)}
+                            \]
+                        </p>
+                        <p>
+                            Moreover, each sample introduces random errors in the estimation of \( \sigma^2 \). Averaging multiple sample variances cancels out <b>random overestimations and underestimations</b>, improving the reliability of the estimate.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -315,15 +399,17 @@
         document.getElementById('numSample').textContent = `${n}`;
 
         sampleMeans.push(sampleMean);
-        sampleVariances.push(sampleVariance / n);
+        sampleVariances.push(sampleVariance);
 
         //Calcola la media e la varianza delle medie campionarie
         let meanMeans = sampleMeans.reduce((acc, val) => acc + val, 0) / sampleMeans.length;
         let meanVariances = sampleVariances.reduce((acc, val) => acc + val, 0) / sampleVariances.length;
+        let varianceOfMeans = sampleVariances.reduce((acc, val) => acc + (val / n), 0) / sampleVariances.length;
 
         //Mostra i valori medi e di varianza delle medie campionarie
         document.getElementById('empiricalPartialMean').textContent = `${meanMeans.toFixed(4)}`;
         document.getElementById('empiricalPartialVariance').textContent = `${meanVariances.toFixed(4)}`;
+        document.getElementById('empiricalPartialVarianceOfMeans').textContent = `${varianceOfMeans.toFixed(4)}`;
 
         let n_max = document.getElementById('n_max').value;
 
