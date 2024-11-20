@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Convergence of the empirical distribution to the theoretical distribution</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      canvas#background {
+          position: fixed; /* Usa 'fixed' per mantenere il canvas in posizione */
+          top: 0;
+          left: 0;
+          width: 100%; /* Imposta la larghezza al 100% */
+          height: 100%; /* Imposta l'altezza al 100% */
+          z-index: -1; /* Assicurati che sia dietro altri contenuti */
+          background-color: #000; /* Imposta il colore di sfondo */
+      }
+  
+      .glassCard{
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 16px;
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          height: max-content;
+      }
+
+      .glassChart{
+        background: rgba(0, 0, 0, 0.9);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        height: max-content;
+    }
+  
+      .glassHeader{
+          background: rgba(0, 132, 255, 0.2);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          height: max-content;
+      }
+    </style>
+</head>
+<body class="h-svh">
+    <nav class="glassHeader w-full fixed top-0 start-0 z-10">
+      <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <a href="#" class="text-white">
+            <h1 class="text-3xl font-bold">Guido Cesarano - 1803991</h1>
+            <h2 class="text-2xl font-semibold">Statistics Course a.a. 24/25</h2>
+        </a>
+        <button data-collapse-toggle="navbar-hamburger" type="button" class="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-white rounded-lg hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-200" aria-controls="navbar-hamburger" aria-expanded="false">
+          <span class="sr-only">Open main menu</span>
+          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+          </svg>
+        </button>
+        <div class="hidden w-full" id="navbar-hamburger">
+          <ul class="flex flex-col font-medium mt-4">
+            <li>
+              <a href="/statistics_24-25/hw1.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 1</a>
+            </li>
+            <li>
+              <a href="/statistics_24-25/hw2.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 2</a>
+            </li>
+            <li>
+              <a href="/statistics_24-25/hw3.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 3</a>
+            </li>
+            <li>
+              <a href="/statistics_24-25/hw4.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 4</a>
+            </li>
+            <li>
+                <a href="/statistics_24-25/hw5.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 5</a>
+            </li>
+            <li>
+                <a href="/statistics_24-25/hw6.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 6</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <canvas id="background"></canvas>
+
+    <main class="mt-32 mb-4 mx-4">
+        <div class="glassCard shadow rounded-lg p-8">
+            <h1 class="text-2xl font-bold text-white text-center">Distribution of modular residues</h1>
+            <div class="flex justify-center items-center my-4 gap-3">
+              <label class="block text-sm font-medium text-white" for="n_max">Max U:</label>
+              <input class="w-max bg-gray-50 border border-gray-300 text-blue-600 font-semibold text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" type="number" id="maxU" value="100" min="1" />
+              <button id="buttonSimulate" class="text-blue-600 bg-white hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5" onclick="generateCharts()">Simulate</button>
+            </div>
+        </div>
+
+        <div class="glassCard shadow rounded-lg p-3 mt-3 flex flex-col justify-center">
+            <div class="grid grid-cols-4 gap-3" id="charts"></div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 mt-3">
+            <div class="glassCard shadow rounded-lg p-8 text-white">
+                <h1 class="text-2xl font-bold text-center mb-3">Modulus and Exponentiation in Cryptography</h1>
+                <p>
+                Many cryptographic algorithms, such as RSA and Diffie-Hellman, rely on modular arithmetic and exponentiation:
+                <ul class="list-disc list-inside my-3 ms-3">
+                    <li>\( Y = g^U \mod n \): Here,  \( g \) is a generator, and \( U \)  is a random variable (often a secret key)</li>
+                    <li>The modulus  \( n \)  defines the “space” of possible values for  \( Y \)</li>
+                </ul>
+                A common goal in cryptography is to achieve a uniform distribution of possible values for  \( Y \) , ensuring:
+                <ul class="list-disc list-inside my-3 ms-3">
+                    <li>It is difficult to predict  \( U \)  given  \( Y \)  (one-wayness property)</li>
+                    <li>Correlations that could compromise security are avoided</li>
+                </ul>
+                </p>
+            </div>
+            <div class="glassCard shadow rounded-lg p-8 text-white">
+                <h1 class="text-2xl font-bold text-center mb-3">Case A:  \( g = 19 ,  n = 2, 3, 10, 17 \)</h1>
+                <p>
+                    <ul class="list-disc list-inside my-3 ms-3">
+                        <li>\( g = 19 \)  is chosen to be “relatively prime” to \( n \) (i.e., no common divisors with \( n \)), ensuring that the sequence \( g^U \mod n \) explores the entire set of modular residues</li>
+                        <li>When \( n \) is a prime number ( \( n = 17 \) ), all possible residues (\( 0, 1, \dots, n-1 \)) are visited uniformly (a property of cyclic groups)</li>
+                        <li>This distribution is ideal for cryptographic purposes: high entropy and unpredictability</li>
+                    </ul>
+                </p>
+            </div>
+            <div class="glassCard shadow rounded-lg p-8 text-white">
+                <h1 class="text-2xl font-bold text-center mb-3">Case B:  \( g = 15 ,  n = 3, 6, 9, 12 \)</h1>
+                <p>
+                    <ul class="list-disc list-inside my-3 ms-3">
+                        <li>Here,  \( g = 15 \)  is not always relatively prime to \( n \)  (e.g.,  \( n = 3, 6, 9 \) )</li>
+                        <li>The sequence \( g^U \mod n \) often “collapses” into a small subset of residues (e.g., for  \( n = 6 \), only  \( 0, 3 \)  are possible)</li>
+                        <li>The distribution is non-uniform with low entropy, indicating cryptographic vulnerabilities: \( Y \)  becomes easier to guess, Correlations may be exploitable in attacks</li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+          
+    </main>
+
+    <script>
+        // Function to generate random colors
+        function getRandomColor() {
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            return `rgba(${r}, ${g}, ${b}, 0.6)`; // Adding some transparency
+        }
+
+        // Function to calculate entropy
+        function calculateEntropy(distribution) {
+            const total = distribution.reduce((sum, freq) => sum + freq, 0);
+            return distribution.reduce((entropy, freq) => {
+                if (freq === 0) return entropy; // Ignore zero frequencies
+                const p = freq / total; // Probability
+                return entropy - p * Math.log2(p); // Entropy formula
+            }, 0).toFixed(2); // Return entropy rounded to two decimal places
+        }
+
+        function generateDistribution(maxU, n, g) {
+            const distribution = new Array(n).fill(0); // Initialize frequencies
+            for (let U = 1; U <= maxU; U++) {
+                const Y = Math.pow(g, U) % n; // Calculate Y = g^U mod n
+                distribution[Y]++; // Increment frequency for this residue
+            }
+            return distribution;
+        }
+
+        function generateCharts() {
+            const maxU = parseInt(document.getElementById('maxU').value);
+            const cases = [
+                { nValues: [2, 3, 10, 17], g: 19 },
+                { nValues: [3, 6, 9, 12], g: 15 }
+            ];
+            
+            const chartsContainer = document.getElementById('charts');
+            chartsContainer.innerHTML = ""; // Clear previous charts
+            
+            cases.forEach((caseSet, index) => {
+                caseSet.nValues.forEach(n => {
+                    const distribution = generateDistribution(maxU, n, caseSet.g);
+                    const entropy = calculateEntropy(distribution);
+                    
+                    // Create canvas for chart
+                    const canvasContainer = document.createElement('div');
+                    canvasContainer.classList.add("max-w-md");
+                    chartsContainer.appendChild(canvasContainer);
+                    const canvas = document.createElement('canvas');
+                    canvas.id = `chart-${index}-${n}`;
+                    canvas.classList.add("glassChart");
+                    canvasContainer.appendChild(canvas);
+                    
+                    // Generate chart with random color
+                    new Chart(canvas, {
+                        type: 'bar',
+                        data: {
+                            labels: distribution.map((_, i) => i.toString()), // Residue labels
+                            datasets: [{
+                                label: `g = ${caseSet.g}, n = ${n}`,
+                                data: distribution,
+                                backgroundColor: getRandomColor() // Assign random color
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: `Distribution of Y = g^U mod n (Entropy: ${entropy})`
+                                }
+                            },
+                            scales: {
+                                x: { 
+                                    title: { 
+                                        display: true, 
+                                        text: `Residue(Y)` // Show entropy as axis label
+                                    } 
+                                },
+                                y: { 
+                                    title: { 
+                                        display: true, 
+                                        text: 'Frequency' 
+                                    } 
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        generateCharts();
+    </script>
+    <script src="background.js"></script>
+</body>
+</html>
