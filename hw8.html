@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caesar cipher analyzer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        canvas#background {
+            position: fixed; /* Usa 'fixed' per mantenere il canvas in posizione */
+            top: 0;
+            left: 0;
+            width: 100%; /* Imposta la larghezza al 100% */
+            height: 100%; /* Imposta l'altezza al 100% */
+            z-index: -1; /* Assicurati che sia dietro altri contenuti */
+            background-color: #000; /* Imposta il colore di sfondo */
+        }
+    
+        .glassCard{
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            height: max-content;
+        }
+  
+        .glassChart{
+          background: rgba(0, 0, 0, 0.9);
+          border-radius: 16px;
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(5px);
+          -webkit-backdrop-filter: blur(5px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          height: calc(max-content + 2rem);
+      }
+    
+        .glassHeader{
+            background: rgba(0, 132, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            height: max-content;
+        }
+      </style>
+</head>
+<body class="h-svh">
+    <nav class="glassHeader w-full fixed top-0 start-0 z-10">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+          <a href="#" class="text-white">
+              <h1 class="text-3xl font-bold">Guido Cesarano - 1803991</h1>
+              <h2 class="text-2xl font-semibold">Statistics Course a.a. 24/25</h2>
+          </a>
+          <button data-collapse-toggle="navbar-hamburger" type="button" class="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-white rounded-lg hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-200" aria-controls="navbar-hamburger" aria-expanded="false">
+            <span class="sr-only">Open main menu</span>
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+            </svg>
+          </button>
+          <div class="hidden w-full" id="navbar-hamburger">
+            <ul class="flex flex-col font-medium mt-4">
+              <li>
+                <a href="/statistics_24-25/hw1.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 1</a>
+              </li>
+              <li>
+                <a href="/statistics_24-25/hw2.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 2</a>
+              </li>
+              <li>
+                <a href="/statistics_24-25/hw3.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 3</a>
+              </li>
+              <li>
+                <a href="/statistics_24-25/hw4.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 4</a>
+              </li>
+              <li>
+                  <a href="/statistics_24-25/hw5.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 5</a>
+              </li>
+              <li>
+                  <a href="/statistics_24-25/hw6.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 6</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <canvas id="background"></canvas>
+      <main class="mt-32 mb-4 mx-4">
+        <div class="glassCard shadow rounded-lg p-8">
+            <h1 class="text-2xl font-bold text-white text-center">Caesar cipher analyzer</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex justify-center flex-col">
+                    <textarea 
+                    id="originalText" 
+                    class="w-full mt-4 h-24 p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-white focus:border-white"
+                        ></textarea>
+                    <button 
+                        onclick="processText()" 
+                        class="text-blue-600 bg-white hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4"
+                    >
+                        Analizza e Cifra
+                    </button>
+                </div>
+                <!-- Frequenze Testo Originale -->
+                <div class="mt-6 h-[300px]">
+                    <canvas class="glassChart" id="originalChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Griglia dei Risultati -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <!-- Testo Cifrato -->
+            <div class="glassCard shadow rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-semibold text-white mb-4">Cypher text</h2>
+                <div id="encryptedText" class="p-4 bg-gray-50 rounded-md text-gray-700"></div>
+            </div>
+
+            <!-- Frequenze Testo Cifrato -->
+            <div class="glassCard shadow rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-semibold text-white mb-4">Frequency distribution of the cypher text</h2>
+                <div class="mt-6 h-[300px]">
+                    <canvas class="glassChart" id="encryptedChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Decifratura -->
+        <div class="glassCard shadow rounded-lg shadow-md mt-4 p-6">
+            <h2 class="text-2xl font-semibold text-white mb-4">Decryption attempt</h2>
+            <div id="decryptedText" class="font-mono p-4 bg-gray-50 rounded-md text-gray-700"></div>
+        </div>
+      </main>
+
+    <script>
+        const sampleTexts = [
+            {
+                title: "Shakespeare's Sonnet",
+                text: "Shall I compare thee to a summer's day? Thou art more lovely and more temperate. Rough winds do shake the darling buds of May, And summer's lease hath all too short a date. Sometime too hot the eye of heaven shines, And often is his gold complexion dimmed; And every fair from fair sometime declines, By chance, or nature's changing course, untrimmed."
+            },
+            {
+                title: "Scientific Statement",
+                text: "The human brain is the most complex organ in the known universe. It contains approximately 86 billion neurons connected by trillions of synapses. Every thought, emotion, and action we experience emerges from the coordinated activity of these neural networks. Scientists continue to discover new aspects of brain function and organization through advanced imaging techniques and experimental studies."
+            },
+            {
+                title: "Technology Article",
+                text: "Artificial Intelligence has transformed the way we interact with technology. Machine learning algorithms now power everything from recommendation systems to autonomous vehicles. The rapid advancement of AI capabilities has sparked discussions about ethics, privacy, and the future of human work. As these systems become more sophisticated, the boundary between human and machine intelligence continues to evolve."
+            },
+            {
+                title: "Nature Description",
+                text: "The ancient redwood forest stood silent in the morning mist. Towering trees reached skyward, their branches creating a cathedral-like canopy hundreds of feet above. Soft moss carpeted the forest floor, punctuated by clusters of wild mushrooms and delicate ferns. The air was rich with the scent of damp earth and pine needles, carrying the whispers of countless generations of natural history."
+            }
+        ];
+
+        function initializeWithRandomText() {
+            const randomIndex = Math.floor(Math.random() * sampleTexts.length);
+            const selectedText = sampleTexts[randomIndex];
+            const textarea = document.getElementById('originalText');
+            textarea.value = selectedText.text;
+            
+            // Aggiunge un menu a tendina per selezionare il testo
+            const selectContainer = document.createElement('div');
+            
+            const label = document.createElement('label');
+            label.className = 'block text-sm font-medium text-white mb-2';
+            label.textContent = 'Select Sample Text';
+            
+            const select = document.createElement('select');
+            select.className = 'bg-gray-50 border border-gray-300 text-blue-600 text-sm rounded-lg focus:ring-white focus:border-white block w-full p-2.5';
+            select.onchange = function() {
+                const selectedText = sampleTexts[this.value];
+                textarea.value = selectedText.text;
+                // Chiamata automatica all'analisi quando viene selezionato un nuovo testo
+                processText();
+            };
+            
+            sampleTexts.forEach((text, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.text = text.title;
+                option.selected = index === randomIndex;
+                select.appendChild(option);
+            });
+            
+            selectContainer.appendChild(label);
+            selectContainer.appendChild(select);
+            textarea.parentNode.insertBefore(selectContainer, textarea);
+
+            // Esegue l'analisi iniziale del testo selezionato casualmente
+            processText();
+        }
+
+        // Chiama questa funzione quando il documento è pronto
+        document.addEventListener('DOMContentLoaded', initializeWithRandomText);
+
+        function getLetterFrequency(text) {
+            const frequency = {};
+            const cleanText = text.toLowerCase().replace(/[^a-zàèéìòóùA-Z]/g, '');
+            
+            for (let char of cleanText) {
+                frequency[char] = (frequency[char] || 0) + 1;
+            }
+            
+            const total = cleanText.length;
+            const percentages = {};
+            for (let char in frequency) {
+                percentages[char] = (frequency[char] / total * 100).toFixed(2);
+            }
+            
+            return percentages;
+        }
+
+        function caesarCipher(text, shift) {
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            return text.toLowerCase().split('').map(char => {
+                const idx = alphabet.indexOf(char);
+                if (idx === -1) return char;
+                return alphabet[(idx + shift) % alphabet.length];
+            }).join('');
+        }
+
+        function createFrequencyChart(frequencies, canvasId, label) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const sortedEntries = Object.entries(frequencies).sort((a, b) => b[1] - a[1]);
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedEntries.map(entry => entry[0]),
+                    datasets: [{
+                        label: label,
+                        data: sortedEntries.map(entry => entry[1]),
+                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                        borderColor: 'rgb(255, 255, 255)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Character Frequency Distribution',
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            formatter: value => value,
+                            font: {
+                                weight: 'semibold'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            barPercentage: 0.3,
+                            categoryPercentage: 0.5
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Frequency (%)'
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
+            });
+        }
+
+        function findMostLikelyShift(originalFreq, encryptedFreq) {
+            const englishFrequencies = {
+                'e': 12.02, 't': 9.10, 'a': 8.12, 'o': 7.68, 'i': 7.31,
+                'n': 6.95, 's': 6.28, 'r': 6.02, 'h': 5.92, 'd': 4.32,
+                'l': 3.98, 'u': 2.88, 'c': 2.71, 'm': 2.61, 'f': 2.30,
+                'y': 2.11, 'w': 2.09, 'g': 2.03, 'p': 1.82, 'b': 1.49,
+                'v': 1.11, 'k': 0.69, 'x': 0.17, 'q': 0.11, 'j': 0.10, 'z': 0.07
+            };
+
+            const encryptedSorted = Object.entries(encryptedFreq).sort((a, b) => b[1] - a[1]);
+            const englishSorted = Object.entries(englishFrequencies).sort((a, b) => b[1] - a[1]);
+            
+            // Ipotizza che la lettera più frequente nel testo cifrato corrisponda alla 'e'
+            const mostFrequentEncrypted = encryptedSorted[0][0];
+            const expectedChar = 'e';  // 'e' è la lettera più frequente in inglese
+            
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';  // Rimosso caratteri speciali italiani
+            const shift = (alphabet.indexOf(mostFrequentEncrypted) - alphabet.indexOf(expectedChar) + alphabet.length) % alphabet.length;
+            
+            return shift;
+        }
+
+        //Funzione per animare la cifratura
+        function animateCipher(originalText, encryptedText, elementId, shift) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = ''; // Pulisce il contenitore
+            
+            // Crea il contenitore per l'animazione con stile Tailwind
+            const animationContainer = document.createElement('div');
+            animationContainer.className = 'font-mono relative p-4 bg-gray-50 rounded-md';
+
+            // Aggiungi un indicatore dello shift
+            const shiftIndicator = document.createElement('div');
+            shiftIndicator.className = 'absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm';
+            shiftIndicator.textContent = `Shift: ${shift}`;
+            animationContainer.appendChild(shiftIndicator);
+            
+            // Crea il contenitore per il testo
+            const textContainer = document.createElement('div');
+            textContainer.className = 'break-words mt-8';
+            animationContainer.appendChild(textContainer);
+            
+            container.appendChild(animationContainer);
+
+            let currentIndex = 0;
+            const chars = originalText.split('');
+            const encryptedChars = encryptedText.split('');
+            
+            // Funzione per aggiungere un singolo carattere con animazione
+            function addChar() {
+                if (currentIndex < chars.length) {
+                    const charSpan = document.createElement('span');
+                    const originalChar = chars[currentIndex];
+                    const encryptedChar = encryptedChars[currentIndex];
+                    
+                    // Aggiungi il carattere originale
+                    charSpan.textContent = originalChar;
+                    charSpan.className = 'inline-block transition-all duration-300 ease-in-out';
+                    textContainer.appendChild(charSpan);
+                    
+                    // Animazione di trasformazione
+                    setTimeout(() => {
+                        charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-red-500 bg-red-100';
+                        setTimeout(() => {
+                            charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-110';
+                            charSpan.textContent = encryptedChar;
+                            setTimeout(() => {
+                                charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-gray-700';
+                            }, 150);
+                        }, 150);
+                    }, 50);
+                    
+                    currentIndex++;
+                    setTimeout(addChar, 100); // Velocità dell'animazione
+                } else {
+                    // Al termine dell'animazione, sostituisci il contenuto con il testo cifrato completo
+                    setTimeout(() => {
+                        textContainer.innerHTML = ''; // Svuota il contenitore
+                        textContainer.textContent = encryptedText; // Mostra il testo completo cifrato
+                        textContainer.className = 'text-red-600 mt-8'; // Stile finale
+                        const encryptedFreq = getLetterFrequency(encryptedText);
+                        createFrequencyChart(encryptedFreq, 'encryptedChart', 'Frequenza Lettere (Testo Cifrato)');
+                        animateDecipher(encryptedText, originalText, 'decryptedText', 26 - shift);
+                    }, 200); // Ritardo per una transizione fluida
+                }
+            }
+            
+            addChar();
+        }
+
+        function animateDecipher(encryptedText, decryptedText, elementId, shift) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = ''; // Pulisce il contenitore
+
+            // Crea il contenitore per l'animazione con stile Tailwind
+            const animationContainer = document.createElement('div');
+            animationContainer.className = 'font-mono relative p-4 bg-gray-50 rounded-md';
+            
+            // Aggiungi un indicatore dello shift
+            const shiftIndicator = document.createElement('div');
+            shiftIndicator.className = 'absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-sm';
+            shiftIndicator.textContent = `Shift Inverso: ${shift}`;
+            animationContainer.appendChild(shiftIndicator);
+            
+            // Crea il contenitore per il testo
+            const textContainer = document.createElement('div');
+            textContainer.className = 'break-words mt-8';
+            animationContainer.appendChild(textContainer);
+            
+            container.appendChild(animationContainer);
+
+            let currentIndex = encryptedText.length - 1; // Parte dalla fine del testo
+            const chars = encryptedText.split('');
+            const decryptedChars = decryptedText.split('');
+            
+            // Funzione per aggiungere un singolo carattere con animazione
+            function addChar() {
+                if (currentIndex >= 0) {
+                    const charSpan = document.createElement('span');
+                    const encryptedChar = chars[currentIndex];
+                    const decryptedChar = decryptedChars[currentIndex];
+                    
+                    // Aggiungi il carattere cifrato
+                    charSpan.textContent = encryptedChar;
+                    charSpan.className = 'inline-block transition-all duration-300 ease-in-out';
+                    textContainer.prepend(charSpan); // Aggiunge alla fine del testo
+                    
+                    // Animazione di trasformazione
+                    setTimeout(() => {
+                        charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-green-500 bg-green-100';
+                        setTimeout(() => {
+                            charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-110';
+                            charSpan.textContent = decryptedChar;
+                            setTimeout(() => {
+                                charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-gray-700';
+                            }, 150);
+                        }, 150);
+                    }, 50);
+                    
+                    currentIndex--;
+                    setTimeout(addChar, 100); // Velocità dell'animazione
+                } else {
+                // Al termine dell'animazione, sostituisci il contenuto con il testo decifrato completo
+                setTimeout(() => {
+                    textContainer.innerHTML = ''; // Svuota il contenitore
+                    textContainer.textContent = decryptedText; // Mostra il testo completo decifrato
+                    textContainer.className = 'text-green-600 mt-8'; // Stile finale
+                }, 200); // Ritardo per una transizione fluida
+            }
+            }
+            
+            addChar();
+        }
+
+        // Modifica la funzione processText() per includere l'animazione di decifratura
+        function processText() {
+            const originalText = document.getElementById('originalText').value;
+
+            // Analisi frequenza testo originale
+            const originalFreq = getLetterFrequency(originalText);
+            createFrequencyChart(originalFreq, 'originalChart', 'Frequenza Lettere (Testo Originale)');
+
+            // Cifratura con shift casuale
+            const shift = Math.floor(Math.random() * 26) + 1;
+            const encryptedText = caesarCipher(originalText, shift);
+
+            // Animazione della cifratura
+            animateCipher(originalText, encryptedText, 'encryptedText', shift);
+
+            // Decifratura con shift più probabile (attendi animazione cifratura)
+            document.getElementById('decryptedText').innerHTML = `<p><span class="font-semibold">Waiting for the cyper text ...</span></p>`;
+            document.getElementById('encrypedChart').innerHTML = `<p><span class="font-semibold">Waiting for the cyper text ...</span></p>`;
+        }
+    </script>
+    <script src="background.js"></script>
+</body>
+</html>
