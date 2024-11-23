@@ -126,7 +126,7 @@
             </div>
         </div>
         <!-- Decifratura -->
-        <div class="glassCard shadow rounded-lg shadow-md mt-4 p-6">
+        <div class="glassCard shadow rounded-lg shadow-md my-4 p-6">
             <h2 class="text-2xl font-semibold text-white mb-4">Decryption attempt</h2>
             <div id="decryptedText" class="font-mono p-4 bg-gray-50 rounded-md text-gray-700"></div>
         </div>
@@ -221,8 +221,22 @@
 
         function createFrequencyChart(frequencies, canvasId, label) {
             const ctx = document.getElementById(canvasId).getContext('2d');
-            const sortedEntries = Object.entries(frequencies).sort((a, b) => b[1] - a[1]);
+            //Ordina le lettere in ordine alfabetico
+            const sortedEntries = Object.entries(frequencies).sort((a, b) => a[0].localeCompare(b[0]));
+
+            //Ordina le lettere in base alla frequenza
+            const sortedFreqEntries = Object.entries(frequencies).sort((a, b) => b[1] - a[1]);
             
+            // Find the most frequent letter and its position (0-based index)
+            const mostFrequentLetter = sortedFreqEntries[0];
+
+            // Calculate the position in the alphabet (A=1, Z=26)
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            const letterPosition = alphabet.indexOf(mostFrequentLetter[0].toLowerCase()) + 1;
+
+            // Generate the subtitle text
+            const subtitleText = `Most likely letter: '${mostFrequentLetter[0]}' (#${letterPosition})`;
+
             new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -241,7 +255,11 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Character Frequency Distribution',
+                            text: 'Character Frequency Distribution [' + subtitleText + ']',
+                            padding: {
+                                top: 5,
+                                bottom: 30
+                            }
                         },
                         legend: {
                             display: false
@@ -292,13 +310,12 @@
             const mostFrequentEncrypted = encryptedSorted[0][0];
             const expectedChar = 'e';  // 'e' è la lettera più frequente in inglese
             
-            const alphabet = 'abcdefghijklmnopqrstuvwxyz';  // Rimosso caratteri speciali italiani
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
             const shift = (alphabet.indexOf(mostFrequentEncrypted) - alphabet.indexOf(expectedChar) + alphabet.length) % alphabet.length;
             
             return shift;
         }
 
-        //Funzione per animare la cifratura
         function animateCipher(originalText, encryptedText, elementId, shift) {
             const container = document.getElementById(elementId);
             container.innerHTML = ''; // Pulisce il contenitore
@@ -306,7 +323,7 @@
             // Crea il contenitore per l'animazione con stile Tailwind
             const animationContainer = document.createElement('div');
             animationContainer.className = 'font-mono relative p-4 bg-gray-50 rounded-md';
-
+            
             // Aggiungi un indicatore dello shift
             const shiftIndicator = document.createElement('div');
             shiftIndicator.className = 'absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm';
@@ -320,36 +337,31 @@
             
             container.appendChild(animationContainer);
 
-            let currentIndex = 0;
+            // Mostra subito il testo originale
             const chars = originalText.split('');
-            const encryptedChars = encryptedText.split('');
+            textContainer.innerHTML = chars.map(char => `<span class="inline-block">${char}</span>`).join('');
+            const charSpans = textContainer.querySelectorAll('span');
             
-            // Funzione per aggiungere un singolo carattere con animazione
-            function addChar() {
+            let currentIndex = 0;
+
+            // Funzione per animare la trasformazione di un singolo carattere
+            function transformChar() {
                 if (currentIndex < chars.length) {
-                    const charSpan = document.createElement('span');
-                    const originalChar = chars[currentIndex];
-                    const encryptedChar = encryptedChars[currentIndex];
-                    
-                    // Aggiungi il carattere originale
-                    charSpan.textContent = originalChar;
-                    charSpan.className = 'inline-block transition-all duration-300 ease-in-out';
-                    textContainer.appendChild(charSpan);
+                    const charSpan = charSpans[currentIndex];
+                    const encryptedChar = encryptedText[currentIndex];
                     
                     // Animazione di trasformazione
+                    charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-red-500 bg-red-100';
                     setTimeout(() => {
-                        charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-red-500 bg-red-100';
+                        charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-110';
+                        charSpan.textContent = encryptedChar;
                         setTimeout(() => {
-                            charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-110';
-                            charSpan.textContent = encryptedChar;
-                            setTimeout(() => {
-                                charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-gray-700';
-                            }, 150);
+                            charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-gray-700';
                         }, 150);
-                    }, 50);
-                    
+                    }, 150);
+
                     currentIndex++;
-                    setTimeout(addChar, 100); // Velocità dell'animazione
+                    setTimeout(transformChar, 25); // Velocità dell'animazione
                 } else {
                     // Al termine dell'animazione, sostituisci il contenuto con il testo cifrato completo
                     setTimeout(() => {
@@ -363,7 +375,7 @@
                 }
             }
             
-            addChar();
+            setTimeout(transformChar, 1000); // Inizia l'animazione dopo un breve ritardo
         }
 
         function animateDecipher(encryptedText, decryptedText, elementId, shift) {
@@ -387,52 +399,50 @@
             
             container.appendChild(animationContainer);
 
-            let currentIndex = encryptedText.length - 1; // Parte dalla fine del testo
+            // Mostra subito il testo cifrato
             const chars = encryptedText.split('');
-            const decryptedChars = decryptedText.split('');
-            
-            // Funzione per aggiungere un singolo carattere con animazione
-            function addChar() {
+            textContainer.innerHTML = chars.map(char => `<span class="inline-block">${char}</span>`).join('');
+            const charSpans = textContainer.querySelectorAll('span');
+
+            let currentIndex = chars.length - 1;
+
+            // Funzione per trasformare ogni carattere gradualmente
+            function transformChar() {
                 if (currentIndex >= 0) {
-                    const charSpan = document.createElement('span');
-                    const encryptedChar = chars[currentIndex];
-                    const decryptedChar = decryptedChars[currentIndex];
-                    
-                    // Aggiungi il carattere cifrato
-                    charSpan.textContent = encryptedChar;
-                    charSpan.className = 'inline-block transition-all duration-300 ease-in-out';
-                    textContainer.prepend(charSpan); // Aggiunge alla fine del testo
+                    const charSpan = charSpans[currentIndex];
+                    const decryptedChar = decryptedText[currentIndex];
                     
                     // Animazione di trasformazione
+                    charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-green-500 bg-green-100';
                     setTimeout(() => {
-                        charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-green-500 bg-green-100';
+                        charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-110';
+                        charSpan.textContent = decryptedChar;
                         setTimeout(() => {
-                            charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-110';
-                            charSpan.textContent = decryptedChar;
-                            setTimeout(() => {
-                                charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-gray-700';
-                            }, 150);
+                            charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-gray-700';
                         }, 150);
-                    }, 50);
-                    
+                    }, 150);
+
                     currentIndex--;
-                    setTimeout(addChar, 100); // Velocità dell'animazione
+                    setTimeout(transformChar, 25); // Velocità dell'animazione
                 } else {
-                // Al termine dell'animazione, sostituisci il contenuto con il testo decifrato completo
-                setTimeout(() => {
-                    textContainer.innerHTML = ''; // Svuota il contenitore
-                    textContainer.textContent = decryptedText; // Mostra il testo completo decifrato
-                    textContainer.className = 'text-green-600 mt-8'; // Stile finale
-                }, 200); // Ritardo per una transizione fluida
-            }
+                    // Al termine dell'animazione, mostra il testo decifrato completo
+                    setTimeout(() => {
+                        textContainer.innerHTML = ''; // Svuota il contenitore
+                        textContainer.textContent = decryptedText; // Mostra il testo completo decifrato
+                        textContainer.className = 'text-green-600 mt-8'; // Stile finale
+                    }, 200); // Ritardo per una transizione fluida
+                }
             }
             
-            addChar();
+            setTimeout(transformChar, 1000); // Inizia l'animazione dopo un breve ritardo
         }
 
         // Modifica la funzione processText() per includere l'animazione di decifratura
         function processText() {
             const originalText = document.getElementById('originalText').value;
+
+            // Decifratura con shift più probabile (attendi animazione cifratura)
+            document.getElementById('decryptedText').innerHTML = `<p><span class="font-semibold">Waiting for the cyper text ...</span></p>`;
 
             // Analisi frequenza testo originale
             const originalFreq = getLetterFrequency(originalText);
@@ -444,10 +454,6 @@
 
             // Animazione della cifratura
             animateCipher(originalText, encryptedText, 'encryptedText', shift);
-
-            // Decifratura con shift più probabile (attendi animazione cifratura)
-            document.getElementById('decryptedText').innerHTML = `<p><span class="font-semibold">Waiting for the cyper text ...</span></p>`;
-            document.getElementById('encrypedChart').innerHTML = `<p><span class="font-semibold">Waiting for the cyper text ...</span></p>`;
         }
     </script>
     <script src="background.js"></script>
