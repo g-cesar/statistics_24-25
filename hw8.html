@@ -353,7 +353,7 @@
                     // Animazione di trasformazione
                     charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-red-500 bg-red-100';
                     setTimeout(() => {
-                        charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-110';
+                        charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-125';
                         charSpan.textContent = encryptedChar;
                         setTimeout(() => {
                             charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-gray-700';
@@ -389,7 +389,7 @@
             // Aggiungi un indicatore dello shift
             const shiftIndicator = document.createElement('div');
             shiftIndicator.className = 'absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-sm';
-            shiftIndicator.textContent = `Shift Inverso: ${shift}`;
+            shiftIndicator.textContent = `Inverted shift: ${shift}`;
             animationContainer.appendChild(shiftIndicator);
             
             // Crea il contenitore per il testo
@@ -415,7 +415,7 @@
                     // Animazione di trasformazione
                     charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-green-500 bg-green-100';
                     setTimeout(() => {
-                        charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-110';
+                        charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-125';
                         charSpan.textContent = decryptedChar;
                         setTimeout(() => {
                             charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-gray-700';
