@@ -30,11 +30,9 @@
         }
   
         .glassChart{
-          background: rgba(0, 0, 0, 0.9);
+          background: rgba(0, 0, 0, 0.85);
           border-radius: 16px;
           box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-          backdrop-filter: blur(5px);
-          -webkit-backdrop-filter: blur(5px);
           border: 1px solid rgba(255, 255, 255, 0.3);
           height: calc(max-content + 2rem);
       }
@@ -163,7 +161,7 @@
             
             const label = document.createElement('label');
             label.className = 'block text-sm font-medium text-white mb-2';
-            label.textContent = 'Select Sample Text';
+            label.textContent = 'Select Sample Text or Write Your Own:';
             
             const select = document.createElement('select');
             select.className = 'bg-gray-50 border border-gray-300 text-blue-600 text-sm rounded-lg focus:ring-white focus:border-white block w-full p-2.5';
@@ -369,6 +367,7 @@
                         textContainer.textContent = encryptedText; // Mostra il testo completo cifrato
                         textContainer.className = 'text-red-600 mt-8'; // Stile finale
                         const encryptedFreq = getLetterFrequency(encryptedText);
+                        Chart.getChart('encryptedChart')?.destroy();
                         createFrequencyChart(encryptedFreq, 'encryptedChart', 'Frequenza Lettere (Testo Cifrato)');
                         animateDecipher(encryptedText, originalText, 'decryptedText', 26 - shift);
                     }, 200); // Ritardo per una transizione fluida
@@ -439,6 +438,13 @@
 
         // Modifica la funzione processText() per includere l'animazione di decifratura
         function processText() {
+            //Destroy previous charts
+            Chart.getChart('originalChart')?.destroy();
+            Chart.getChart('encryptedChart')?.destroy();
+            //Reset the decrypted text and the encrypted text
+            document.getElementById('decryptedText').innerHTML = '';
+            document.getElementById('encryptedText').innerHTML = '';
+
             const originalText = document.getElementById('originalText').value;
 
             // Decifratura con shift più probabile (attendi animazione cifratura)
