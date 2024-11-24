@@ -67,6 +67,7 @@
                         <select id="encryptionMethod" class="bg-gray-50 border border-gray-300 text-blue-600 text-sm rounded-lg focus:ring-white focus:border-white block w-full p-2.5">
                             <option value="caesar">Caesar Cipher</option>
                             <option value="modexp">Modular Exponential Cipher</option>
+                            <option value="modexp_secure">Randomized Modular Exponential Cipher</option>
                         </select>
                     </div>
                     <div id="cipherParameters" class="mb-4">
@@ -84,8 +85,69 @@
                         Analyze and Encrypt
                     </button>
                 </div>
-                <div class="mt-6 h-[300px]">
-                    <canvas class="glassChart" id="originalChart"></canvas>
+                <div class="mt-2 h-[300px]">
+                    <canvas class="glassChart" style="width: 100%; height: 80%;" id="originalChart"></canvas>
+                    <p class="text-sm font-medium text-white mt-1 mb-1">Letter frequencies in English:</p>
+                    <div class="overflow-x-auto shadow-md rounded-lg glassChart">
+                        <table class="min-w-full">
+                            <tr class="text-white">
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">e</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">t</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">a</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">o</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">i</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">n</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">s</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">r</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">h</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">d</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">l</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">u</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">c</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">m</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">f</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">y</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">w</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">g</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">p</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">b</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">v</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">k</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">x</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">q</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">j</th>
+                                <th class="px-2 py-1 text-xs font-semibold uppercase border border-gray-800">z</th>
+                            </tr>
+                            <tr class="text-gray-300">
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">12.02</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">9.10</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">8.12</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">7.68</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">7.31</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">6.95</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">6.28</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">6.02</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">5.92</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">4.32</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">3.98</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">2.88</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">2.71</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">2.61</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">2.30</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">2.11</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">2.09</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">2.03</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">1.82</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">1.49</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">1.11</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">0.69</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">0.17</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">0.11</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">0.10</td>
+                                <td class="px-2 py-1 text-xs text-center border border-gray-800">0.07</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -96,14 +158,95 @@
             </div>
             <div class="glassCard shadow rounded-lg shadow-md p-6">
                 <h2 class="text-2xl font-semibold text-white mb-4">Frequency distribution of the encrypted text</h2>
-                <div class="mt-6 h-[300px]">
-                    <canvas class="glassChart" id="encryptedChart"></canvas>
+                <div class="mt-2 h-[300px]">
+                    <canvas class="glassChart" style="width: 100%; height: 80%;" id="encryptedChart"></canvas>
                 </div>
             </div>
         </div>
         <div class="glassCard shadow rounded-lg shadow-md my-4 p-6">
             <h2 class="text-2xl font-semibold text-white mb-4">Decryption attempt</h2>
             <div id="decryptedText" class="font-mono p-4 bg-gray-50 rounded-md text-gray-700"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glassCard shadow rounded-lg shadow-md my-4 p-6">
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">Caesar Cipher</h2>
+                    <ul class="list-disc ml-6 space-y-2">
+                        <li>Simple substitution cipher that shifts each character by a fixed number of positions</li>
+                        <li>It is a monoalphabetic cipher</li>
+                    </ul>
+                </section>
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">ModExp Cipher</h2>
+                    <ul class="list-disc ml-6 space-y-2">
+                        <li>Implements cryptographic operations based on modular arithmetic</li>
+                        <li>Uses a public key consisting of a modulus (<code>N</code>) and an exponent (<code>K</code>)</li>
+                    </ul>
+                </section>
+            </div>
+            <div class="glassCard shadow rounded-lg shadow-md my-4 p-6">
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">Statistical Analysis in Cryptography</h2>
+                    <article class="mb-4">
+                        <h3 class="text-xl font-semibold mb-2">Caesar Cipher</h3>
+                        <p class="mb-2">Extremely vulnerable to statistical analysis because:</p>
+                        <ul class="list-disc ml-6 space-y-2">
+                            <li>Maintains the relative frequency of characters</li>
+                            <li>The most common letters in English (eg.: <code>E</code>, <code>T</code>, <code>A</code>, <code>O</code>) remain identifiable</li>
+                            <li>A few lines of text are enough to determine the shift</li>
+                        </ul>
+                    </article>
+                </section>
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">ModExp Cipher</h2>
+                    <article class="mb-4">
+                        <p class="mb-2">Vulnerable to frequency analysis, as each character is always mapped to the same value</p>
+                        <ul class="list-disc ml-6 space-y-2">
+                            <li>Transforms characters deterministically (the same input always produces the same output)</li>
+                            <li>Maintains a 1:1 mapping between input and output characters</li>
+                            <li>It is possible to construct a mapping table by observing input-output correspondences</li>
+                        </ul>
+                        <p class="mt-2 text-yellow-200">
+                            <strong>Note:</strong> For actual security, the following should be applied:
+                        </p>
+                        <ul class="list-disc ml-6 space-y-2 text-yellow-100">
+                            <li>Random elements (salt) for each message</li>
+                            <li>Proper padding</li>
+                            <li>Standard algorithms like RSA with verified implementations</li>
+                        </ul>
+                    </article>
+                </section>
+            </div>
+            <div class="glassCard shadow rounded-lg shadow-md my-4 p-6">
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">RSA vs Implemented Algorithms</h2>
+                    <p class="mb-4">RSA differs in:</p>
+        
+                    <article class="mb-4">
+                        <h3 class="text-xl font-semibold mb-2">Mathematical Security</h3>
+                        <ul class="list-disc ml-6 space-y-2">
+                            <li>Based on the difficulty of factoring large numbers</li>
+                            <li>Uses keys of much greater length (2048+ bits)</li>
+                        </ul>
+                    </article>
+        
+                    <article class="mb-4">
+                        <h3 class="text-xl font-semibold mb-2">Key Structure</h3>
+                        <ul class="list-disc ml-6 space-y-2">
+                            <li>Pair of asymmetric keys (public/private)</li>
+                            <li>The private key cannot be derived from the public key</li>
+                        </ul>
+                    </article>
+        
+                    <article>
+                        <h3 class="text-xl font-semibold mb-2">Computational Complexity</h3>
+                        <ul class="list-disc ml-6 space-y-2">
+                            <li>Requires very large prime numbers</li>
+                            <li>More complex operations compared to simple modExp</li>
+                        </ul>
+                    </article>
+                </section>
+            </div>
         </div>
     </main>
 
@@ -164,17 +307,17 @@
                     <input type="number" id="shift" min="1" max="25" value="${Math.floor(Math.random() * 25) + 1}" 
                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                 `;
-            } else if (method === 'modexp') {
+            } else if (method === 'modexp' || method === 'modexp_secure') {
                 container.innerHTML = `
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-white mb-2">Base (N):</label>
-                            <input type="number" id="base" value="2" 
+                            <input type="number" id="base" value="10" 
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-white mb-2">Modulus (P):</label>
-                            <input type="number" id="modulus" value="33" 
+                            <input type="number" id="modulus" value="37" 
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                         </div>
                         <div>
@@ -198,40 +341,43 @@
             }).join('');
         }
         
-        function modExpCipher(text, base, exponent, modulus) {
+        function modExpCipher(text, base, exponent, modulus, method) {
             const alphabet = 'abcdefghijklmnopqrstuvwxyz';
             return text.toLowerCase().split('').map(char => {
                 const idx = alphabet.indexOf(char);
                 if (idx === -1) return char;
                 
-                // Cifratura RSA: C = P^k mod N
-                const encrypted = modPow(idx, exponent, modulus);
-                
-                console.log(`Char: ${char}, Index: ${idx}, Encrypted: ${encrypted}`);
+                let encrypted = modPow(idx, exponent, modulus);
+
+                if(method === 'modexp_secure'){
+                    // Cifratura RSA: C = P^k mod N
+                    encrypted = (modPow(idx, exponent, modulus) + Math.floor(Math.random() * 10)) % modulus;
+                }
                 
                 return encrypted.toString();
             }).join(' ');
         }
 
-        function decryptModExp(text, base, exponent, modulus) {
+        function decryptModExp(text, base, exponent, modulus, method) {
             const alphabet = 'abcdefghijklmnopqrstuvwxyz';
             const invExponent = modInverse(exponent, (modulus-1));
-            
-            console.log(`Inverse Exponent: ${invExponent}`);
 
             return text.split(' ').map(char => {
                 if (char === '') return ' ';
                 
                 const num = parseInt(char, 10);
                 if (isNaN(num)) return char;
-                
-                // Decifratura RSA
+
+                // Decifratura RSA: P = C^k mod N
                 let decrypted = modPow(num, invExponent, modulus);
+
+                if(method === 'modexp_secure'){
+                    // Decifratura RSA: P = C^k mod N
+                    decrypted = modPow(num, invExponent, modulus) - Math.floor(Math.random() * 10);
+                }
                 
                 // Mappiamo il valore decifrato all'intervallo 0-25
                 let alphabetIndex = decrypted % alphabet.length;
-                
-                console.log(`Encrypted: ${num}, Decrypted: ${decrypted}, AlphabetIndex: ${alphabetIndex}`);
                 
                 return alphabet[alphabetIndex];
             }).join('');
@@ -294,25 +440,27 @@
         function getSymbolFrequency(text, cipherType) {
             const frequency = {};
             
-            // Pulizia del testo a seconda del tipo di cifratura
-            let cleanText;
-            if (cipherType === 'caesar') {
-                // Solo lettere dell'alfabeto (inclusi accenti)
-                cleanText = text.toLowerCase().replace(/[^a-zàèéìòóù]/g, '');
-            } else if (cipherType === 'modexp') {
-                // Conserva solo caratteri validi (alfanumerici e simboli da cifratura modulare)
-                cleanText = text.toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (cipherType === 'modexp' || cipherType === 'modexp_secure') {
+                // Split il testo in numeri separati da spazi
+                const tokens = text.trim().split(' ').filter(t => t !== '');
+                
+                // Conta frequenza dei numeri completi
+                for (let token of tokens) {
+                    if (token.match(/^\d+$/)) {  // Solo numeri
+                        frequency[token] = (frequency[token] || 0) + 1;
+                    }
+                }
             } else {
-                throw new Error("Unsupported cipherType. Use 'caesar' or 'modexp'.");
+                // Solo lettere dell'alfabeto
+                const cleanText = text.toLowerCase().replace(/[^a-z]/g, '');
+                // Calcola la frequenza per le lettere
+                for (let char of cleanText) {
+                    frequency[char] = (frequency[char] || 0) + 1;
+                }
             }
 
-            // Calcola la frequenza
-            for (let char of cleanText) {
-                frequency[char] = (frequency[char] || 0) + 1;
-            }
-
-            // Calcola le percentuali
-            const total = cleanText.length;
+            // Calcola le percentuali usando il totale appropriato
+            const total = Object.values(frequency).reduce((sum, count) => sum + count, 0);
             const percentages = {};
             for (let char in frequency) {
                 percentages[char] = parseFloat(((frequency[char] / total) * 100).toFixed(2));
@@ -487,7 +635,7 @@
             if (method === 'caesar') {
                 methodIndicator.textContent = `Shift: ${params.shift}`;
             } else {
-                methodIndicator.textContent = `N=${params.base}, k=${params.exponent}, P=${params.modulus}`;
+                methodIndicator.textContent = `PUBLIC KEY: [modulus (N) = ${params.modulus}, exponent (K) = ${params.exponent}]`;
             }
             
             animationContainer.appendChild(methodIndicator);
@@ -538,7 +686,7 @@
                                 shift: 26 - params.shift
                             });
                         } else {
-                            const decryptedText = decryptModExp(encryptedText, params.base, params.exponent, params.modulus);
+                            const decryptedText = decryptModExp(encryptedText, params.base, params.exponent, params.modulus, method);
                             animateDecipher(encryptedText, decryptedText, 'decryptedText', {
                                 method: 'modexp',
                                 base: params.base,
@@ -563,7 +711,7 @@
             const method = document.getElementById('encryptionMethod').value;
 
             // Analisi frequenza testo originale
-            const originalFreq = getSymbolFrequency(originalText, method);
+            const originalFreq = getSymbolFrequency(originalText, "original");
             createFrequencyChart(originalFreq, 'originalChart', 'Letter Frequency (Original Text)', method, null, null);
 
             let encryptedText, params;
@@ -575,7 +723,7 @@
                 const base = parseInt(document.getElementById('base').value) || 10;
                 const exponent = parseInt(document.getElementById('exponent').value) || 7;
                 const modulus = parseInt(document.getElementById('modulus').value) || 37;
-                encryptedText = modExpCipher(originalText, base, exponent, modulus);
+                encryptedText = modExpCipher(originalText, base, exponent, modulus, method);
                 params = { base, exponent, modulus };
             }
 
@@ -595,7 +743,7 @@
             if (params.method === 'caesar') {
                 methodIndicator.textContent = `Inverted shift: ${params.shift}`;
             } else {
-                methodIndicator.textContent = `Decrypting with inverse exponent`;
+                methodIndicator.textContent = `PRIVATE KEY: [modulus (N) = ${params.modulus}, exponent (K) = ${modInverse(params.exponent, (params.modulus-1))}]`;
             }
             
             animationContainer.appendChild(methodIndicator);
