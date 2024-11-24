@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caesar cipher analyzer</title>
+    <title>Cryptography analyzer</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         canvas#background {
-            position: fixed; /* Usa 'fixed' per mantenere il canvas in posizione */
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%; /* Imposta la larghezza al 100% */
-            height: 100%; /* Imposta l'altezza al 100% */
-            z-index: -1; /* Assicurati che sia dietro altri contenuti */
-            background-color: #000; /* Imposta il colore di sfondo */
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: #000;
         }
     
         .glassCard{
@@ -45,92 +45,198 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             height: max-content;
         }
-      </style>
+    </style>
 </head>
 <body class="h-svh">
     <nav class="glassHeader w-full fixed top-0 start-0 z-10">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <a href="#" class="text-white">
-              <h1 class="text-3xl font-bold">Guido Cesarano - 1803991</h1>
-              <h2 class="text-2xl font-semibold">Statistics Course a.a. 24/25</h2>
+            <h1 class="text-3xl font-bold">Guido Cesarano - 1803991</h1>
+            <h2 class="text-2xl font-semibold">Statistics Course a.a. 24/25</h2>
           </a>
-          <button data-collapse-toggle="navbar-hamburger" type="button" class="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-white rounded-lg hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-200" aria-controls="navbar-hamburger" aria-expanded="false">
-            <span class="sr-only">Open main menu</span>
-            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-            </svg>
-          </button>
-          <div class="hidden w-full" id="navbar-hamburger">
-            <ul class="flex flex-col font-medium mt-4">
-              <li>
-                <a href="/statistics_24-25/hw1.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 1</a>
-              </li>
-              <li>
-                <a href="/statistics_24-25/hw2.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 2</a>
-              </li>
-              <li>
-                <a href="/statistics_24-25/hw3.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 3</a>
-              </li>
-              <li>
-                <a href="/statistics_24-25/hw4.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 4</a>
-              </li>
-              <li>
-                  <a href="/statistics_24-25/hw5.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 5</a>
-              </li>
-              <li>
-                  <a href="/statistics_24-25/hw6.html" class="block py-2 px-3 text-white bg-transparent" aria-current="page">Homework 6</a>
-              </li>
-            </ul>
-          </div>
         </div>
-      </nav>
-      <canvas id="background"></canvas>
-      <main class="mt-32 mb-4 mx-4">
+    </nav>
+    <canvas id="background"></canvas>
+    <main class="mt-32 mb-4 mx-4">
         <div class="glassCard shadow rounded-lg p-8">
-            <h1 class="text-2xl font-bold text-white text-center">Caesar cipher analyzer</h1>
+            <h1 class="text-2xl font-bold text-white text-center">Cryptography Analyzer</h1>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="flex justify-center flex-col">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-white mb-2">Select Encryption Method:</label>
+                        <select id="encryptionMethod" class="bg-gray-50 border border-gray-300 text-blue-600 text-sm rounded-lg focus:ring-white focus:border-white block w-full p-2.5">
+                            <option value="caesar">Caesar Cipher</option>
+                            <option value="modexp">Modular Exponential Cipher</option>
+                        </select>
+                    </div>
+                    <div id="cipherParameters" class="mb-4">
+                        <!-- Parameters will be dynamically added here -->
+                    </div>
                     <textarea 
-                    id="originalText" 
-                    class="w-full mt-4 h-24 p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-white focus:border-white"
-                        ></textarea>
+                        id="originalText" 
+                        class="w-full mt-4 h-24 p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-white focus:border-white"
+                        placeholder="Enter text to encrypt..."
+                    ></textarea>
                     <button 
                         onclick="processText()" 
                         class="text-blue-600 bg-white hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4"
                     >
-                        Analizza e Cifra
+                        Analyze and Encrypt
                     </button>
                 </div>
-                <!-- Frequenze Testo Originale -->
                 <div class="mt-6 h-[300px]">
                     <canvas class="glassChart" id="originalChart"></canvas>
                 </div>
             </div>
         </div>
-        <!-- Griglia dei Risultati -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <!-- Testo Cifrato -->
             <div class="glassCard shadow rounded-lg shadow-md p-6">
-                <h2 class="text-2xl font-semibold text-white mb-4">Cypher text</h2>
+                <h2 class="text-2xl font-semibold text-white mb-4">Encrypted Text</h2>
                 <div id="encryptedText" class="p-4 bg-gray-50 rounded-md text-gray-700"></div>
             </div>
-
-            <!-- Frequenze Testo Cifrato -->
             <div class="glassCard shadow rounded-lg shadow-md p-6">
-                <h2 class="text-2xl font-semibold text-white mb-4">Frequency distribution of the cypher text</h2>
+                <h2 class="text-2xl font-semibold text-white mb-4">Frequency distribution of the encrypted text</h2>
                 <div class="mt-6 h-[300px]">
                     <canvas class="glassChart" id="encryptedChart"></canvas>
                 </div>
             </div>
         </div>
-        <!-- Decifratura -->
         <div class="glassCard shadow rounded-lg shadow-md my-4 p-6">
             <h2 class="text-2xl font-semibold text-white mb-4">Decryption attempt</h2>
             <div id="decryptedText" class="font-mono p-4 bg-gray-50 rounded-md text-gray-700"></div>
         </div>
-      </main>
+    </main>
 
     <script>
+        
+        // Calcolo della potenza modulare (N^k % P)
+        function modPow(base, exponent, modulus) {
+            if (modulus === 1) return 0;
+            
+            let result = 1;
+            base = base % modulus;
+            
+            while (exponent > 0) {
+                if (exponent % 2 === 1) {
+                    result = (result * base) % modulus;
+                }
+                base = (base * base) % modulus;
+                exponent = Math.floor(exponent / 2);
+            }
+            
+            return result;
+        }
+
+        // Calcolo dell'inverso moltiplicativo mod P
+        // Algoritmo esteso di Euclide per calcolare l'inverso modulo
+        function modInverse(a, m) {
+            let m0 = m;
+            let x0 = 0;
+            let x1 = 1;
+            
+            if (m == 1) return 0;
+            
+            while (a > 1) {
+                let q = Math.floor(a / m);
+                let t = m;
+                
+                m = a % m;
+                a = t;
+                t = x0;
+                
+                x0 = x1 - q * x0;
+                x1 = t;
+            }
+            
+            if (x1 < 0) x1 += m0;
+            
+            return x1;
+        }
+
+        function updateParameters() {
+            const method = document.getElementById('encryptionMethod').value;
+            const container = document.getElementById('cipherParameters');
+            container.innerHTML = '';
+
+            if (method === 'caesar') {
+                container.innerHTML = `
+                    <label class="block text-sm font-medium text-white mb-2">Shift (1-25):</label>
+                    <input type="number" id="shift" min="1" max="25" value="${Math.floor(Math.random() * 25) + 1}" 
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                `;
+            } else if (method === 'modexp') {
+                container.innerHTML = `
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-white mb-2">Base (N):</label>
+                            <input type="number" id="base" value="2" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-white mb-2">Modulus (P):</label>
+                            <input type="number" id="modulus" value="33" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-white mb-2">Exponent (k):</label>
+                            <input type="number" id="exponent" value="7" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById('encryptionMethod').addEventListener('change', updateParameters);
+
+        function caesarCipher(text, shift) {
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            return text.toLowerCase().split('').map(char => {
+                const idx = alphabet.indexOf(char);
+                if (idx === -1) return char;
+                return alphabet[(idx + shift) % alphabet.length];
+            }).join('');
+        }
+        
+        function modExpCipher(text, base, exponent, modulus) {
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            return text.toLowerCase().split('').map(char => {
+                const idx = alphabet.indexOf(char);
+                if (idx === -1) return char;
+                
+                // Cifratura RSA: C = P^k mod N
+                const encrypted = modPow(idx, exponent, modulus);
+                
+                console.log(`Char: ${char}, Index: ${idx}, Encrypted: ${encrypted}`);
+                
+                return encrypted.toString();
+            }).join(' ');
+        }
+
+        function decryptModExp(text, base, exponent, modulus) {
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            const invExponent = modInverse(exponent, (modulus-1));
+            
+            console.log(`Inverse Exponent: ${invExponent}`);
+
+            return text.split(' ').map(char => {
+                if (char === '') return ' ';
+                
+                const num = parseInt(char, 10);
+                if (isNaN(num)) return char;
+                
+                // Decifratura RSA
+                let decrypted = modPow(num, invExponent, modulus);
+                
+                // Mappiamo il valore decifrato all'intervallo 0-25
+                let alphabetIndex = decrypted % alphabet.length;
+                
+                console.log(`Encrypted: ${num}, Decrypted: ${decrypted}, AlphabetIndex: ${alphabetIndex}`);
+                
+                return alphabet[alphabetIndex];
+            }).join('');
+        }
+
         const sampleTexts = [
             {
                 title: "Shakespeare's Sonnet",
@@ -183,58 +289,108 @@
             selectContainer.appendChild(label);
             selectContainer.appendChild(select);
             textarea.parentNode.insertBefore(selectContainer, textarea);
-
-            // Esegue l'analisi iniziale del testo selezionato casualmente
-            processText();
         }
 
-        // Chiama questa funzione quando il documento è pronto
-        document.addEventListener('DOMContentLoaded', initializeWithRandomText);
-
-        function getLetterFrequency(text) {
+        function getSymbolFrequency(text, cipherType) {
             const frequency = {};
-            const cleanText = text.toLowerCase().replace(/[^a-zàèéìòóùA-Z]/g, '');
             
+            // Pulizia del testo a seconda del tipo di cifratura
+            let cleanText;
+            if (cipherType === 'caesar') {
+                // Solo lettere dell'alfabeto (inclusi accenti)
+                cleanText = text.toLowerCase().replace(/[^a-zàèéìòóù]/g, '');
+            } else if (cipherType === 'modexp') {
+                // Conserva solo caratteri validi (alfanumerici e simboli da cifratura modulare)
+                cleanText = text.toLowerCase().replace(/[^a-z0-9]/g, '');
+            } else {
+                throw new Error("Unsupported cipherType. Use 'caesar' or 'modexp'.");
+            }
+
+            // Calcola la frequenza
             for (let char of cleanText) {
                 frequency[char] = (frequency[char] || 0) + 1;
             }
-            
+
+            // Calcola le percentuali
             const total = cleanText.length;
             const percentages = {};
             for (let char in frequency) {
-                percentages[char] = (frequency[char] / total * 100).toFixed(2);
+                percentages[char] = parseFloat(((frequency[char] / total) * 100).toFixed(2));
             }
-            
+
             return percentages;
         }
 
-        function caesarCipher(text, shift) {
-            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-            return text.toLowerCase().split('').map(char => {
-                const idx = alphabet.indexOf(char);
-                if (idx === -1) return char;
-                return alphabet[(idx + shift) % alphabet.length];
-            }).join('');
-        }
-
-        function createFrequencyChart(frequencies, canvasId, label) {
+        function createFrequencyChart(frequencies, canvasId, label, cipherType, modulus, base) {
             const ctx = document.getElementById(canvasId).getContext('2d');
-            //Ordina le lettere in ordine alfabetico
+
+            // Controllo: Frequenze vuote
+            if (!frequencies || Object.keys(frequencies).length === 0) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: label,
+                            data: [],
+                            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                            borderColor: 'rgb(255, 255, 255)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'No frequency data available',
+                                padding: {
+                                    top: 5,
+                                    bottom: 30
+                                }
+                            },
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: false
+                            },
+                            y: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+                return;
+            }
+
+            // Ordina le frequenze per valore decrescente
+            const sortedFreqEntries = Object.entries(frequencies).sort((a, b) => b[1] - a[1]);
+            const mostFrequentChar = sortedFreqEntries[0];
+
+            let subtitleText = `Most frequent: '${mostFrequentChar[0]}'`;
+
+            // Solo per il cifrario di Cesare, calcola la posizione alfabetica
+            if (cipherType === 'caesar') {
+                const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+                const charPosition = alphabet.indexOf(mostFrequentChar[0].toLowerCase()) + 1;
+                if (charPosition > 0) {
+                    subtitleText += ` (#${charPosition})`;
+                }
+            }
+
+            // Per il cifrario modulare, aggiungi informazioni sul dominio
+            if (cipherType === 'modexp' && modulus && base) {
+                subtitleText += ` | Modulus: ${modulus}, Base: ${base}`;
+            }
+
+            // Ordina alfabeticamente per visualizzazione
             const sortedEntries = Object.entries(frequencies).sort((a, b) => a[0].localeCompare(b[0]));
 
-            //Ordina le lettere in base alla frequenza
-            const sortedFreqEntries = Object.entries(frequencies).sort((a, b) => b[1] - a[1]);
-            
-            // Find the most frequent letter and its position (0-based index)
-            const mostFrequentLetter = sortedFreqEntries[0];
-
-            // Calculate the position in the alphabet (A=1, Z=26)
-            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-            const letterPosition = alphabet.indexOf(mostFrequentLetter[0].toLowerCase()) + 1;
-
-            // Generate the subtitle text
-            const subtitleText = `Most likely letter: '${mostFrequentLetter[0]}' (#${letterPosition})`;
-
+            // Crea il grafico
             new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -263,7 +419,7 @@
                             display: false
                         },
                         tooltip: {
-                            enabled: false
+                            enabled: true
                         },
                         datalabels: {
                             anchor: 'end',
@@ -277,7 +433,11 @@
                     scales: {
                         x: {
                             barPercentage: 0.3,
-                            categoryPercentage: 0.5
+                            categoryPercentage: 0.5,
+                            title: {
+                                display: true,
+                                text: 'Characters or Numbers'
+                            }
                         },
                         y: {
                             beginAtZero: true,
@@ -314,41 +474,43 @@
             return shift;
         }
 
-        function animateCipher(originalText, encryptedText, elementId, shift) {
+        function animateCipher(originalText, encryptedText, elementId, method, params) {
             const container = document.getElementById(elementId);
-            container.innerHTML = ''; // Pulisce il contenitore
+            container.innerHTML = '';
             
-            // Crea il contenitore per l'animazione con stile Tailwind
             const animationContainer = document.createElement('div');
             animationContainer.className = 'font-mono relative p-4 bg-gray-50 rounded-md';
             
-            // Aggiungi un indicatore dello shift
-            const shiftIndicator = document.createElement('div');
-            shiftIndicator.className = 'absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm';
-            shiftIndicator.textContent = `Shift: ${shift}`;
-            animationContainer.appendChild(shiftIndicator);
+            const methodIndicator = document.createElement('div');
+            methodIndicator.className = 'absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm';
             
-            // Crea il contenitore per il testo
+            if (method === 'caesar') {
+                methodIndicator.textContent = `Shift: ${params.shift}`;
+            } else {
+                methodIndicator.textContent = `N=${params.base}, k=${params.exponent}, P=${params.modulus}`;
+            }
+            
+            animationContainer.appendChild(methodIndicator);
+            
             const textContainer = document.createElement('div');
             textContainer.className = 'break-words mt-8';
             animationContainer.appendChild(textContainer);
             
             container.appendChild(animationContainer);
 
-            // Mostra subito il testo originale
             const chars = originalText.split('');
             textContainer.innerHTML = chars.map(char => `<span class="inline-block">${char}</span>`).join('');
             const charSpans = textContainer.querySelectorAll('span');
             
             let currentIndex = 0;
 
-            // Funzione per animare la trasformazione di un singolo carattere
             function transformChar() {
                 if (currentIndex < chars.length) {
                     const charSpan = charSpans[currentIndex];
-                    const encryptedChar = encryptedText[currentIndex];
+                    const encryptedChar = method === 'caesar' ? 
+                        encryptedText[currentIndex] :
+                        encryptedText.split(' ')[currentIndex] || ' ';
                     
-                    // Animazione di trasformazione
                     charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-red-500 bg-red-100';
                     setTimeout(() => {
                         charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-125';
@@ -359,59 +521,109 @@
                     }, 150);
 
                     currentIndex++;
-                    setTimeout(transformChar, 25); // Velocità dell'animazione
+                    setTimeout(transformChar, 25);
                 } else {
-                    // Al termine dell'animazione, sostituisci il contenuto con il testo cifrato completo
                     setTimeout(() => {
-                        textContainer.innerHTML = ''; // Svuota il contenitore
-                        textContainer.textContent = encryptedText; // Mostra il testo completo cifrato
-                        textContainer.className = 'text-red-600 mt-8'; // Stile finale
-                        const encryptedFreq = getLetterFrequency(encryptedText);
+                        textContainer.innerHTML = '';
+                        textContainer.textContent = encryptedText;
+                        textContainer.className = 'text-red-600 mt-8';
+                        const encryptedFreq = getSymbolFrequency(encryptedText, method);
                         Chart.getChart('encryptedChart')?.destroy();
-                        createFrequencyChart(encryptedFreq, 'encryptedChart', 'Frequenza Lettere (Testo Cifrato)');
-                        animateDecipher(encryptedText, originalText, 'decryptedText', 26 - shift);
-                    }, 200); // Ritardo per una transizione fluida
+                        createFrequencyChart(encryptedFreq, 'encryptedChart', 'Letter Frequency (Encrypted Text)', method, params.modulus, params.base);
+                        
+                        // Start decryption animation
+                        if (method === 'caesar') {
+                            animateDecipher(encryptedText, originalText, 'decryptedText', {
+                                method: 'caesar',
+                                shift: 26 - params.shift
+                            });
+                        } else {
+                            const decryptedText = decryptModExp(encryptedText, params.base, params.exponent, params.modulus);
+                            animateDecipher(encryptedText, decryptedText, 'decryptedText', {
+                                method: 'modexp',
+                                base: params.base,
+                                exponent: params.exponent,
+                                modulus: params.modulus
+                            });
+                        }
+                    }, 200);
                 }
             }
             
-            setTimeout(transformChar, 1000); // Inizia l'animazione dopo un breve ritardo
+            setTimeout(transformChar, 1000);
         }
 
-        function animateDecipher(encryptedText, decryptedText, elementId, shift) {
-            const container = document.getElementById(elementId);
-            container.innerHTML = ''; // Pulisce il contenitore
+        function processText() {
+            Chart.getChart('originalChart')?.destroy();
+            Chart.getChart('encryptedChart')?.destroy();
+            document.getElementById('decryptedText').innerHTML = '';
+            document.getElementById('encryptedText').innerHTML = '';
 
-            // Crea il contenitore per l'animazione con stile Tailwind
+            const originalText = document.getElementById('originalText').value;
+            const method = document.getElementById('encryptionMethod').value;
+
+            // Analisi frequenza testo originale
+            const originalFreq = getSymbolFrequency(originalText, method);
+            createFrequencyChart(originalFreq, 'originalChart', 'Letter Frequency (Original Text)', method, null, null);
+
+            let encryptedText, params;
+            if (method === 'caesar') {
+                const shift = parseInt(document.getElementById('shift').value) || 3;
+                encryptedText = caesarCipher(originalText, shift);
+                params = { shift };
+            } else {
+                const base = parseInt(document.getElementById('base').value) || 10;
+                const exponent = parseInt(document.getElementById('exponent').value) || 7;
+                const modulus = parseInt(document.getElementById('modulus').value) || 37;
+                encryptedText = modExpCipher(originalText, base, exponent, modulus);
+                params = { base, exponent, modulus };
+            }
+
+            animateCipher(originalText, encryptedText, 'encryptedText', method, params);
+        }
+
+        function animateDecipher(encryptedText, decryptedText, elementId, params) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+
             const animationContainer = document.createElement('div');
             animationContainer.className = 'font-mono relative p-4 bg-gray-50 rounded-md';
             
-            // Aggiungi un indicatore dello shift
-            const shiftIndicator = document.createElement('div');
-            shiftIndicator.className = 'absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-sm';
-            shiftIndicator.textContent = `Inverted shift: ${shift}`;
-            animationContainer.appendChild(shiftIndicator);
+            const methodIndicator = document.createElement('div');
+            methodIndicator.className = 'absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-sm';
             
-            // Crea il contenitore per il testo
+            if (params.method === 'caesar') {
+                methodIndicator.textContent = `Inverted shift: ${params.shift}`;
+            } else {
+                methodIndicator.textContent = `Decrypting with inverse exponent`;
+            }
+            
+            animationContainer.appendChild(methodIndicator);
+            
             const textContainer = document.createElement('div');
             textContainer.className = 'break-words mt-8';
             animationContainer.appendChild(textContainer);
             
             container.appendChild(animationContainer);
 
-            // Mostra subito il testo cifrato
-            const chars = encryptedText.split('');
-            textContainer.innerHTML = chars.map(char => `<span class="inline-block">${char}</span>`).join('');
+            const encryptedChars = params.method === 'caesar' ? 
+                encryptedText.split('') : 
+                encryptedText.split(' ');
+            
+            textContainer.innerHTML = encryptedChars.map(char => 
+                `<span class="inline-block">${char}</span>`
+            ).join(params.method === 'caesar' ? '' : ' ');
+            
             const charSpans = textContainer.querySelectorAll('span');
+            let currentIndex = encryptedChars.length - 1;
 
-            let currentIndex = chars.length - 1;
-
-            // Funzione per trasformare ogni carattere gradualmente
             function transformChar() {
                 if (currentIndex >= 0) {
                     const charSpan = charSpans[currentIndex];
-                    const decryptedChar = decryptedText[currentIndex];
+                    const decryptedChar = params.method === 'caesar' ? 
+                        decryptedText[currentIndex] : 
+                        decryptedText[currentIndex];
                     
-                    // Animazione di trasformazione
                     charSpan.className = 'inline-block transition-all duration-300 ease-in-out text-green-500 bg-green-100';
                     setTimeout(() => {
                         charSpan.className = 'inline-block transition-all duration-300 ease-in-out transform scale-125';
@@ -422,45 +634,24 @@
                     }, 150);
 
                     currentIndex--;
-                    setTimeout(transformChar, 25); // Velocità dell'animazione
+                    setTimeout(transformChar, 25);
                 } else {
-                    // Al termine dell'animazione, mostra il testo decifrato completo
                     setTimeout(() => {
-                        textContainer.innerHTML = ''; // Svuota il contenitore
-                        textContainer.textContent = decryptedText; // Mostra il testo completo decifrato
-                        textContainer.className = 'text-green-600 mt-8'; // Stile finale
-                    }, 200); // Ritardo per una transizione fluida
+                        textContainer.innerHTML = '';
+                        textContainer.textContent = decryptedText;
+                        textContainer.className = 'text-green-600 mt-8';
+                    }, 200);
                 }
             }
             
-            setTimeout(transformChar, 1000); // Inizia l'animazione dopo un breve ritardo
+            setTimeout(transformChar, 1000);
         }
 
-        // Modifica la funzione processText() per includere l'animazione di decifratura
-        function processText() {
-            //Destroy previous charts
-            Chart.getChart('originalChart')?.destroy();
-            Chart.getChart('encryptedChart')?.destroy();
-            //Reset the decrypted text and the encrypted text
-            document.getElementById('decryptedText').innerHTML = '';
-            document.getElementById('encryptedText').innerHTML = '';
-
-            const originalText = document.getElementById('originalText').value;
-
-            // Decifratura con shift più probabile (attendi animazione cifratura)
-            document.getElementById('decryptedText').innerHTML = `<p><span class="font-semibold">Waiting for the cyper text ...</span></p>`;
-
-            // Analisi frequenza testo originale
-            const originalFreq = getLetterFrequency(originalText);
-            createFrequencyChart(originalFreq, 'originalChart', 'Frequenza Lettere (Testo Originale)');
-
-            // Cifratura con shift casuale
-            const shift = Math.floor(Math.random() * 26) + 1;
-            const encryptedText = caesarCipher(originalText, shift);
-
-            // Animazione della cifratura
-            animateCipher(originalText, encryptedText, 'encryptedText', shift);
-        }
+        // Initialize parameters on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateParameters();
+            initializeWithRandomText();
+        });
     </script>
     <script src="background.js"></script>
 </body>
