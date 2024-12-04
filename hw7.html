@@ -124,6 +124,8 @@
                         <strong>Average of sample variances:</strong> \(\frac{1}{n} \sum_{i=1}^{n} s_i^2 = \) <span class="italic" id="empiricalPartialVariance">0.00</span>
                         <br>
                         <strong>Variance of sample means:</strong> \( \sum_{i=1}^{n}\text{Var}(\bar{x_i}) = \) <span class="italic" id="empiricalPartialVarianceOfMeans">0.00</span>
+                        <br>
+                        <strong>Variance of sample variances:</strong> \( \text{Var}(s_i^2) = \) <span class="italic" id="empiricalVarianceOfVariances">0.00</span>
                     </p>
                 </div>
                 <div class="border-t border-white">
@@ -202,9 +204,17 @@
                         \[ \text{Mean of sample variances} = \frac{1}{N} \sum_{i=1}^N s_i^2 \]
                     </p>
                 </div>
+                <div class="mt-3">
+                    <h1 class="text-xl font-semibold">Variance of Sample Variances</h1>
+                    <p>
+                        It measures how much the sample variances \( s^2 \) fluctuate around their mean value
+
+                        \[ \text{Var}(s^2) = \frac{1}{N} \sum_{i=1}^N (s_i^2 - \bar{s^2})^2 \]
+                    </p>
+                </div>
             </div>
             <div class="col-span-4 flex flex-col justify-start">
-                <div class="grid grid-rows-2 gap-3">
+                <div class="grid grid-cols-1 gap-3">
                     <div class="glassCard text-white max-w-screen-lg shadow rounded-lg p-3">
                         <h1 class="text-xl font-semibold mb-3">Why does the average of sample means approach \( \mu \)?</h1>
                         <p>
@@ -246,6 +256,20 @@
                         <p>
                             Moreover, each sample introduces random errors in the estimation of \( \sigma^2 \). Averaging multiple sample variances cancels out <b>random overestimations and underestimations</b>, improving the reliability of the estimate.
                         </p>
+                    </div>
+                    <div class="glassCard text-white max-w-screen-lg shadow rounded-lg p-3">
+                        <h1 class="text-xl font-semibold mb-3">Why does the variance of sample variances approach \( \frac{2\sigma^4}{n - 1} \)?</h1>
+                        <p>
+                            The sample variance is an unbiased estimator of the population variance, but it is a random variable itself. The fluctuation in sample variances depends on the sample size \( n \) and the population’s fourth moment (kurtosis).
+                            
+                            \[ \text{Var}(s^2) \approx \frac{2\sigma^4}{n - 1} \]
+                        </p>
+                        <p>
+                            As \( n \) increases, the variance of sample variances decreases because larger samples provide more stable estimates of the population variance.
+
+                            \[ \lim_{n \to \infty} \text{Var}(s^2) = 0 \]
+                        </p>
+                        <p>This means that, with very large samples, individual sample variances become nearly identical, reflecting the population variance \( \sigma^2 \) with negligible fluctuation.</p>
                     </div>
                 </div>
             </div>
@@ -405,11 +429,13 @@
         let meanMeans = sampleMeans.reduce((acc, val) => acc + val, 0) / sampleMeans.length;
         let meanVariances = sampleVariances.reduce((acc, val) => acc + val, 0) / sampleVariances.length;
         let varianceOfMeans = sampleVariances.reduce((acc, val) => acc + (val / n), 0) / sampleVariances.length;
+        let varianceOfVariances = sampleVariances.reduce((acc, val) => acc + (val - meanVariances) ** 2, 0) / sampleVariances.length;
 
         //Mostra i valori medi e di varianza delle medie campionarie
         document.getElementById('empiricalPartialMean').textContent = `${meanMeans.toFixed(4)}`;
         document.getElementById('empiricalPartialVariance').textContent = `${meanVariances.toFixed(4)}`;
         document.getElementById('empiricalPartialVarianceOfMeans').textContent = `${varianceOfMeans.toFixed(4)}`;
+        document.getElementById('empiricalVarianceOfVariances').textContent = `${varianceOfVariances.toFixed(4)}`;
 
         let n_max = document.getElementById('n_max').value;
 
