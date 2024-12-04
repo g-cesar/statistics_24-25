@@ -68,6 +68,7 @@
                             <option value="caesar">Caesar Cipher</option>
                             <option value="modexp">Modular Exponential Cipher</option>
                             <option value="modexp_secure">Randomized Modular Exponential Cipher</option>
+                            <option value="aes-toy">AES-like Cipher</option>
                         </select>
                     </div>
                     <div id="cipherParameters" class="mb-4">
@@ -252,6 +253,15 @@
 
     <script>
         
+        // Aggiungi questo codice per gestire l'abilitazione/disabilitazione dei campi
+        document.getElementById('liveModeCheckbox').addEventListener('change', function(e) {
+            const encryptedInput = document.getElementById('encryptedInput');
+            const originalInput = document.getElementById('originalText');
+            
+            encryptedInput.disabled = !e.target.checked;
+            originalInput.disabled = e.target.checked;
+        });
+
         // Calcolo della potenza modulare (N^k % P)
         function modPow(base, exponent, modulus) {
             if (modulus === 1) return 0;
@@ -381,6 +391,47 @@
                 
                 return alphabet[alphabetIndex];
             }).join('');
+        }
+
+        // Funzione per generare la chiave di sostituzione
+        function generateSubstitutionKey() {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            const shuffled = [...alphabet];
+            // Fisher-Yates shuffle
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            // Crea oggetto di mappatura
+            const key = {};
+            alphabet.forEach((letter, i) => {
+                key[letter] = shuffled[i];
+            });
+            return key;
+        }
+
+        // Funzione di cifratura AES-Toy con reverse
+        function aesToyCipher(text, key, mode) {
+            text = text.toUpperCase();
+            
+            if (mode === 'decrypt') {
+                // Per la decifratura, prima invertiamo il testo
+                text = text.split('').reverse().join('');
+            }
+            
+            // Applica la sostituzione
+            const result = text.split('').map(char => {
+                if (!/[A-Z]/.test(char)) return char;
+                return mode === 'encrypt' ? key[char] : 
+                    Object.keys(key).find(k => key[k] === char);
+            }).join('');
+            
+            if (mode === 'encrypt') {
+                // Per la cifratura, invertiamo il risultato alla fine
+                return result.split('').reverse().join('');
+            }
+            
+            return result;
         }
 
         const sampleTexts = [
@@ -630,18 +681,22 @@
             animationContainer.className = 'font-mono relative p-4 bg-gray-50 rounded-md';
             
             const methodIndicator = document.createElement('div');
-            methodIndicator.className = 'absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm';
+            methodIndicator.className = 'bg-red-500 text-white text-center px-2 py-1 rounded-md text-sm';
             
             if (method === 'caesar') {
                 methodIndicator.textContent = `Shift: ${params.shift}`;
-            } else {
+            }
+            else if (method === 'aes-toy'){
+                methodIndicator.textContent = `SUBSTITUTION KEY: [${Object.entries(params.key).map(([k, v]) => `(${k}: ${v})`).join(', ')}]`;
+            }
+            else {
                 methodIndicator.textContent = `PUBLIC KEY: [modulus (N) = ${params.modulus}, exponent (K) = ${params.exponent}]`;
             }
             
             animationContainer.appendChild(methodIndicator);
             
             const textContainer = document.createElement('div');
-            textContainer.className = 'break-words mt-8';
+            textContainer.className = 'break-words mt-4';
             animationContainer.appendChild(textContainer);
             
             container.appendChild(animationContainer);
@@ -685,7 +740,16 @@
                                 method: 'caesar',
                                 shift: 26 - params.shift
                             });
-                        } else {
+                        }
+                        else if(method === 'aes-toy'){
+                            const decryptedText = aesToyCipher(encryptedText, params.key, 'decrypt');
+                            animateDecipher(encryptedText, decryptedText, 'decryptedText', {
+                                method: 'aes-toy',
+                                key: params.key
+                            });
+
+                        }
+                        else {
                             const decryptedText = decryptModExp(encryptedText, params.base, params.exponent, params.modulus, method);
                             animateDecipher(encryptedText, decryptedText, 'decryptedText', {
                                 method: 'modexp',
@@ -719,7 +783,14 @@
                 const shift = parseInt(document.getElementById('shift').value) || 3;
                 encryptedText = caesarCipher(originalText, shift);
                 params = { shift };
-            } else {
+            }
+            else if (method === 'aes-toy') {
+                const key = generateSubstitutionKey();
+                encryptedText = aesToyCipher(originalText, key, 'encrypt');
+                // Salva la chiave per la decifratura
+                params = { key };
+            }
+            else {
                 const base = parseInt(document.getElementById('base').value) || 10;
                 const exponent = parseInt(document.getElementById('exponent').value) || 7;
                 const modulus = parseInt(document.getElementById('modulus').value) || 37;
@@ -738,18 +809,22 @@
             animationContainer.className = 'font-mono relative p-4 bg-gray-50 rounded-md';
             
             const methodIndicator = document.createElement('div');
-            methodIndicator.className = 'absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-md text-sm';
+            methodIndicator.className = 'bg-green-500 text-white text-center px-2 py-1 rounded-md text-sm';
             
             if (params.method === 'caesar') {
                 methodIndicator.textContent = `Inverted shift: ${params.shift}`;
-            } else {
+            }
+            else if (params.method === 'aes-toy'){
+                methodIndicator.textContent = `SUBSTITUTION KEY: [${Object.entries(params.key).map(([k, v]) => `(${v}: ${k})`).join(', ')}]`;
+            }
+            else {
                 methodIndicator.textContent = `PRIVATE KEY: [modulus (N) = ${params.modulus}, exponent (K) = ${modInverse(params.exponent, (params.modulus-1))}]`;
             }
             
             animationContainer.appendChild(methodIndicator);
             
             const textContainer = document.createElement('div');
-            textContainer.className = 'break-words mt-8';
+            textContainer.className = 'break-words mt-4';
             animationContainer.appendChild(textContainer);
             
             container.appendChild(animationContainer);
