@@ -252,15 +252,6 @@
     </main>
 
     <script>
-        
-        // Aggiungi questo codice per gestire l'abilitazione/disabilitazione dei campi
-        document.getElementById('liveModeCheckbox').addEventListener('change', function(e) {
-            const encryptedInput = document.getElementById('encryptedInput');
-            const originalInput = document.getElementById('originalText');
-            
-            encryptedInput.disabled = !e.target.checked;
-            originalInput.disabled = e.target.checked;
-        });
 
         // Calcolo della potenza modulare (N^k % P)
         function modPow(base, exponent, modulus) {
