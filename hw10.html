@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lebesgue–Stieltjes Integration</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        canvas#background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: #000;
+        }
+    
+        .glassCard{
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            height: max-content;
+        }
+  
+        .glassChart{
+          background: rgba(0, 0, 0, 0.85);
+          border-radius: 16px;
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          height: calc(max-content + 2rem);
+      }
+    
+        .glassHeader{
+            background: rgba(0, 132, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            height: max-content;
+        }
+    </style>
+</head>
+<body class="h-svh">
+    <nav class="glassHeader w-full fixed top-0 start-0 z-10">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+          <a href="#" class="text-white">
+            <h1 class="text-3xl font-bold">Guido Cesarano - 1803991</h1>
+            <h2 class="text-2xl font-semibold">Statistics Course a.a. 24/25</h2>
+          </a>
+        </div>
+    </nav>
+    <canvas id="background"></canvas>
+    <main class="mt-32 mb-4 mx-4">
+        <div class="glassCard shadow rounded-lg p-8">
+            <h1 class="text-2xl font-bold text-white text-center">Numerical Integration: Riemann vs Lebesgue</h1>
+            <p class="text-white mb-4 text-center">Compare the integration methods with different types of functions.</p>
+            <div class="w-max-screen-lg mx-auto flex flex-col items-center">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="function-select" class="block text-lg font-medium text-white">Choose a function:</label>
+                        <select id="function-select" class="mt-1 block w-full p-2 border rounded-md text-blue-600">
+                            <option value="linear">f(x) = x</option>
+                            <option value="quadratic">f(x) = x²</option>
+                            <option value="sine">f(x) = sin(2πx)</option>
+                            <option value="step">Step Function</option>
+                            <option value="exp">f(x) = e⁻ˣ</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="intervals" class="block text-lg font-medium text-white">Number of Intervals:</label>
+                        <input type="number" id="intervals" value="100" min="1" class="mt-1 block w-full p-2 border rounded-md text-blue-600" />
+                    </div>
+                </div>
+                <button 
+                    onclick="computeIntegrals()" 
+                    class="text-blue-600 bg-white hover:bg-blue-100 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4"
+                >
+                    Compute Integrals
+                </button>
+                <div id="results" class="mt-6 text-white"></div>
+            </div>
+            <div>
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-center mb-4 text-white">Riemann Integral</h2>
+                        <div id="riemann-placeholder" class="glassChart flex items-center justify-center h-64 text-white">
+                            <p>Waiting for graph data ...</p>
+                        </div>
+                        <canvas id="riemann-graph" class="glassChart hidden"></canvas>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-center mb-4 text-white">Lebesgue Integral</h2>
+                        <div id="lebesgue-placeholder" class="glassChart flex items-center justify-center h-64 text-white">
+                            <p>Waiting for graph data ...</p>
+                        </div>
+                        <canvas id="lebesgue-graph" class="glassChart hidden"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="glassCard shadow rounded-lg shadow-md my-4 p-6">
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">Sampling Mean and Variance</h2>
+                    <p>When working with data samples, the sample mean and sample variance provide essential tools to estimate the characteristics of a population.</p>
+                </section>
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">Sample Mean</h2>
+                    <p>The sample mean  \( \bar{X} \)  of a dataset  \( \{X_1, X_2, \ldots, X_n\} \)  is defined as:
+                        \[ \bar{X} = \frac{1}{n} \sum_{i=1}^n X_i \]
+                        If  \( X_1, X_2, \ldots, X_n \) are random variables with mean \( \mu \), then:
+                        \[ \mathbb{E}[\bar{X}] = \mu \]
+                        This indicates that \( \bar{X} \) is an unbiased estimator of \( \mu \)
+                    </p>
+                </section>
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">Variance</h2>
+                    <p>
+                        \[ \text{Var}(\bar{X}) = \frac{\sigma^2}{n} \]
+                        where \( \sigma^2 \) is the population variance. The variance decreases as the sample size  \( n \)  increases, reflecting the law of large numbers.
+                        <br>
+                        <br>
+                        By the Central Limit Theorem, for large  \( n \), \( \bar{X} \) is approximately normally distributed, even if the original data are not normally distributed.
+                    </p>
+                </section>
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">Sample Variance</h2>
+                    <p>
+                        The sample variance \( S^2 \) is defined as:
+                        \[ S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2 \]
+                        If  X_1, X_2, \ldots, X_n  are i.i.d. with variance  \sigma^2 , then:
+                        \[ \mathbb{E}[S^2] = \sigma^2 \]
+                        This means \( S^2 \) is also an unbiased estimator of \( \sigma^2 \)
+                        <br>
+                        <br>
+                        For normally distributed \( X_i \), the scaled sample variance follows a chi-squared distribution:
+                        \[ \frac{(n-1)S^2}{\sigma^2} \sim \chi^2_{n-1} \]
+                        The chi-squared distribution reflects the variability in \( S^2 \), depending on the degrees of freedom \( n-1 \)
+                    </p>
+                </section>
+            </div>
+            <div class="glassCard shadow rounded-lg shadow-md my-4 p-6">
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">Lebesgue–Stieltjes Integration</h2>
+                    <p>
+                        The Lebesgue–Stieltjes integral extends the classical Riemann integral by allowing integration with respect to a broader class of functions, called distribution functions or monotonic functions. It is particularly useful in probability theory and measure theory.
+                    </p>
+                    <article class="mb-4">
+                        <h3 class="text-xl font-semibold mb-2">Definition</h3>
+                        <p>
+                            Given a function \( f(x) \) and a monotonic (non-decreasing) function \( F(x) \), the Lebesgue–Stieltjes integral of \( f(x) \) with respect to \( F(x) \) over the interval \( [a, b] \) is denoted as:
+                            \[ \int_a^b f(x) \, dF(x) \]
+                            If \( F(x) \) is differentiable, \( dF(x) = F^{\prime}(x)dx \), then integral reduces to:
+                            \[ \int_a^b f(x) F{\prime}(x) \, dx \]
+                        </p>
+                    </article>
+                </section>
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">Applications in Probability Theory</h2>
+                    <article class="mb-4">
+                        <p class="mb-2">
+                            For a random variable \( X \) with cumulative distribution function (CDF) \( F(x) \), the expectation \( \mathbb{E}[X] \) is:
+
+                            \[ \mathbb{E}[X] = \int_{-\infty}^\infty x \, dF(x) \]
+                        </p>
+                        <p class="mb-2">
+                            Using the Lebesgue–Stieltjes integral, variance is computed as:
+                            \[ \text{Var}(X) = \int_{-\infty}^\infty (x - \mu)^2 \, dF(x) \]
+                            
+                            where \( \mu = \mathbb{E}[X] \)
+                        </p>
+                    </article>
+                </section>
+                <section class="mb-6 text-white">
+                    <h2 class="text-2xl font-semibold mb-3">Advantages Over Riemann Integration</h2>
+                    <article class="mb-4">
+                        <p class="mb-2">
+                            The Lebesgue–Stieltjes integral seamlessly integrates over functions \( F(x) \) with jumps, accommodating discrete random variables.
+                        </p>
+                        <p class="mb-2">
+                            It allows integration over measures where Riemann integration is undefined or cumbersome, such as Dirac delta functions or heavy-tailed distributions.
+                        </p>
+                    </article>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    let riemannChart, lebesgueChart;
+
+    // Funzioni disponibili
+    const functions = {
+    linear: (x) => x,
+    quadratic: (x) => x ** 2,
+    sine: (x) => Math.sin(2 * Math.PI * x),
+    step: (x) => (x < 0.5 ? 0 : 1),
+    exp: (x) => Math.exp(-x),
+    };
+
+    // Calcolo degli integrali e visualizzazione
+    function computeIntegrals() {
+    const selectedFunction = document.getElementById("function-select").value;
+    const intervals = parseInt(document.getElementById("intervals").value, 10);
+    const f = functions[selectedFunction];
+
+    const a = 0; // Limite inferiore
+    const b = 1; // Limite superiore
+    const dx = (b - a) / intervals;
+
+    // Calcolo integrale di Riemann (somma sinistra)
+    let riemannSum = 0;
+    const riemannData = [];
+    for (let i = 0; i < intervals; i++) {
+        const x = a + i * dx;
+        riemannSum += f(x) * dx;
+        riemannData.push({ x, y: f(x) });
+    }
+
+    // Calcolo integrale di Lebesgue
+    const uniqueY = [...new Set(riemannData.map((d) => d.y))].sort((a, b) => a - b);
+    let lebesgueSum = 0;
+    const lebesgueData = [];
+    uniqueY.forEach((y) => {
+        const measure = riemannData.reduce((sum, d) => (d.y === y ? sum + dx : sum), 0);
+        lebesgueSum += y * measure;
+        lebesgueData.push({ x: y, y: y * measure });
+    });
+
+    // Aggiorna i risultati
+    document.getElementById("results").innerHTML = `
+        <p class="text-lg font-medium">Riemann Integral: ${riemannSum.toFixed(6)}</p>
+        <p class="text-lg font-medium">Lebesgue Integral: ${lebesgueSum.toFixed(6)}</p>
+    `;
+
+    // Disegna i grafici
+    drawRiemannGraph(f, a, b, riemannData, intervals, dx);
+    drawLebesgueGraph(lebesgueData);
+    }
+
+    // Disegna il grafico del Riemann
+    function drawRiemannGraph(f, a, b, riemannData, intervals, dx) {
+    // Mostra il placeholder e nasconde il canvas
+    document.getElementById("riemann-placeholder").classList.remove("hidden");
+    document.getElementById("riemann-graph").classList.add("hidden");
+
+    const xValues = [];
+    const yValues = [];
+
+    for (let x = a; x <= b; x += 0.01) {
+        xValues.push(x);
+        yValues.push(f(x));
+    }
+
+    if (riemannChart) riemannChart.destroy();
+
+    const ctx = document.getElementById("riemann-graph").getContext("2d");
+    riemannChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+        labels: xValues,
+        datasets: [
+            {
+            label: "f(x)",
+            data: yValues,
+            borderColor: "blue",
+            borderWidth: 2,
+            fill: false,
+            type: "line",
+            },
+            {
+            label: "Riemann Rectangles",
+            data: riemannData.map((d) => ({ x: d.x, y: d.y })),
+            backgroundColor: "rgba(0, 0, 255, 0.3)",
+            barThickness: dx * 600,
+            },
+        ],
+        },
+        options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true },
+        },
+        scales: {
+            x: { title: { display: true, text: "x" } },
+            y: { title: { display: true, text: "f(x)" } },
+        },
+        },
+    });
+
+    // Nasconde il placeholder e mostra il canvas
+    document.getElementById("riemann-placeholder").classList.add("hidden");
+    document.getElementById("riemann-graph").classList.remove("hidden");
+    }
+
+    // Disegna il grafico del Lebesgue
+    function drawLebesgueGraph(lebesgueData) {
+    // Mostra il placeholder e nasconde il canvas
+    document.getElementById("lebesgue-placeholder").classList.remove("hidden");
+    document.getElementById("lebesgue-graph").classList.add("hidden");
+
+    if (lebesgueChart) lebesgueChart.destroy();
+
+    const ctx = document.getElementById("lebesgue-graph").getContext("2d");
+    lebesgueChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+        labels: lebesgueData.map((d) => d.x.toFixed(2)),
+        datasets: [
+            {
+            label: "Lebesgue Slices (y * measure)",
+            data: lebesgueData.map((d) => d.y),
+            backgroundColor: "rgba(255, 165, 0, 0.5)",
+            barThickness: 15,
+            },
+        ],
+        },
+        options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true },
+        },
+        scales: {
+            x: { title: { display: true, text: "f(x)" } },
+            y: { title: { display: true, text: "Contribution to Integral" } },
+        },
+        },
+    });
+
+    // Nasconde il placeholder e mostra il canvas
+    document.getElementById("lebesgue-placeholder").classList.add("hidden");
+    document.getElementById("lebesgue-graph").classList.remove("hidden");
+    }
+    </script>
+    <script src="background.js"></script>
+</body>
+</html>
